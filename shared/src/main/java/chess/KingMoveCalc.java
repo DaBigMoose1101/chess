@@ -22,27 +22,65 @@ public class KingMoveCalc implements PieceMoveCalc{
         int move2 = row-1;
         int move3 = col+1;
         int move4 = col-1;
-        if (move1 < 8 && move2 >= 0 && move3 < 8 && move4 >= 0){
-            ChessPosition pos1 = new ChessPosition(move1, move4);
-            ChessPosition pos2 = new ChessPosition(move1, col);
-            ChessPosition pos3 = new ChessPosition(move1, move3);
-            ChessPosition pos4 = new ChessPosition(row, move4);
-            ChessPosition pos5 = new ChessPosition(row, move3);
-            ChessPosition pos6 = new ChessPosition(move2, move4);
-            ChessPosition pos7 = new ChessPosition(move2, col);
-            ChessPosition pos8 = new ChessPosition(move2, move3);
-            if(checkPosition(pos1)){
-                ChessMove move = new ChessMove(position, pos1, type);
+        if(isValidMove(move1, move4)){
+            ChessPosition pos = new ChessPosition(move1, move4);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(move1, col)){
+            ChessPosition pos = new ChessPosition(move1, col);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(move1, move3)){
+            ChessPosition pos = new ChessPosition(move1, move3);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(row, move4)){
+            ChessPosition pos = new ChessPosition(row, move4);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(row, move3)){
+            ChessPosition pos = new ChessPosition(row, move3);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(move2, move4)){
+            ChessPosition pos = new ChessPosition(move2, move4);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
+        if(isValidMove(move2, move3)){
+            ChessPosition pos = new ChessPosition(move2, move3);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
                 moves.add(move);
             }
         }
         return moves;
     }
     private boolean checkPosition(ChessPosition pos){
-        if(board.getPiece(position) == null){
+        if(board.getPiece(position) == null || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
             return true;
         }
-        if(board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
+        return false;
+    }
+    private boolean isValidMove(int row, int col){
+        if (row >= 0 && row < 8 && col >= 0 && col < 8){
             return true;
         }
         return false;
