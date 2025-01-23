@@ -30,7 +30,7 @@ public class RookMoveCalc implements PieceMoveCalc {
     }
 
     private void getVertical() {
-        for (int i = position.getRow() + 1; i < 8; i++) {
+        for (int i = position.getRow() + 1; i < 9; i++) {
             ChessPosition pos = new ChessPosition(i, position.getColumn());
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -43,7 +43,7 @@ public class RookMoveCalc implements PieceMoveCalc {
                 break;
             }
         }
-        for (int i = position.getRow() - 1; i >= 0; i--) {
+        for (int i = position.getRow() - 1; i >= 1; i--) {
             ChessPosition pos = new ChessPosition(i, position.getColumn());
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -59,7 +59,7 @@ public class RookMoveCalc implements PieceMoveCalc {
     }
 
     private void getHorizontal() {
-        for (int i = position.getColumn() + 1; i < 8; i++) {
+        for (int i = position.getColumn() + 1; i < 9; i++) {
             ChessPosition pos = new ChessPosition(position.getRow(), i);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -72,7 +72,7 @@ public class RookMoveCalc implements PieceMoveCalc {
                 break;
             }
         }
-        for (int i = position.getColumn() - 1; i >= 0; i--) {
+        for (int i = position.getColumn() - 1; i >= 1; i--) {
             ChessPosition pos = new ChessPosition(position.getRow(), i);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);

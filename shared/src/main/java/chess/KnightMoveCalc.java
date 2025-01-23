@@ -90,9 +90,10 @@ public class KnightMoveCalc implements PieceMoveCalc{
         return false;
     }
     private boolean isValidMove(int row, int col){
-        if (row >= 0 && row < 8 && col >= 0 && col < 8){
+        if (row >= 1 && row < 9 && col >= 1 && col < 9){
             return true;
         }
         return false;
     }
 }
+

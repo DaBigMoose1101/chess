@@ -65,6 +65,13 @@ public class KingMoveCalc implements PieceMoveCalc{
                 moves.add(move);
             }
         }
+        if(isValidMove(move2, col)){
+            ChessPosition pos = new ChessPosition(move2, col);
+            if (checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, type);
+                moves.add(move);
+            }
+        }
         if(isValidMove(move2, move3)){
             ChessPosition pos = new ChessPosition(move2, move3);
             if (checkPosition(pos)){
@@ -75,13 +82,13 @@ public class KingMoveCalc implements PieceMoveCalc{
         return moves;
     }
     private boolean checkPosition(ChessPosition pos){
-        if(board.getPiece(pos) == null || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
+        if(board.getPiece(pos) == null || (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor())){
             return true;
         }
         return false;
     }
     private boolean isValidMove(int row, int col){
-        if (row >= 0 && row < 8 && col >= 0 && col < 8){
+        if (row >= 1 && row < 9 && col >= 1 && col < 9){
             return true;
         }
         return false;

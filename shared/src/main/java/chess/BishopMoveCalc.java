@@ -33,7 +33,7 @@ public class BishopMoveCalc implements PieceMoveCalc {
     private void getDiagonal1(){
         int row = position.getRow()+1;
         int col = position.getColumn()+1;
-        while(row < 8 && col < 8){
+        while(row < 9 && col < 9){
             ChessPosition pos = new ChessPosition(row, col);
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -55,7 +55,7 @@ public class BishopMoveCalc implements PieceMoveCalc {
     private void getDiagonal2() {
         int row = position.getRow()+1;
         int col = position.getColumn()-1;
-        while (row < 8 && col >= 0) {
+        while (row < 9 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -74,7 +74,7 @@ public class BishopMoveCalc implements PieceMoveCalc {
     private void getDiagonal3() {
         int row = position.getRow()-1;
         int col = position.getColumn()-1;
-        while (row >= 0 && col >= 0) {
+        while (row >= 1 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -93,7 +93,7 @@ public class BishopMoveCalc implements PieceMoveCalc {
     private void getDiagonal4() {
         int row = position.getRow()-1;
         int col = position.getColumn()+1;
-        while (row < 8 && col < 8) {
+        while (row >=1  && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);

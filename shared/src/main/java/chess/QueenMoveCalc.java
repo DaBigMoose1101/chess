@@ -29,7 +29,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
         return false;
     }
     private void getVertical(){
-        for(int i = position.getRow()+1; i < 8; i++){
+        for(int i = position.getRow()+1; i < 9; i++){
             ChessPosition pos = new ChessPosition(i, position.getColumn());
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -44,7 +44,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
                 break;
             }
         }
-        for(int i = position.getRow()-1; i >= 0; i--){
+        for(int i = position.getRow()-1; i >= 1; i--){
             ChessPosition pos = new ChessPosition(i, position.getColumn());
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -61,7 +61,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
         }
     }
     private void getHorizontal(){
-        for(int i = position.getColumn()+1; i < 8; i++){
+        for(int i = position.getColumn()+1; i < 9; i++){
             ChessPosition pos = new ChessPosition(position.getRow(), i);
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -76,7 +76,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
                 break;
             }
         }
-        for(int i = position.getColumn()-1; i >= 0; i--){
+        for(int i = position.getColumn()-1; i >= 1; i--){
             ChessPosition pos = new ChessPosition(position.getRow(), i);
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -95,7 +95,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
     private void getDiagonal1(){
         int row = position.getRow()+1;
         int col = position.getColumn()+1;
-        while(row < 8 && col < 8){
+        while(row < 9 && col < 9){
             ChessPosition pos = new ChessPosition(row, col);
             if(checkPosition(pos)){
                 ChessMove move = new ChessMove(position, pos, null);
@@ -117,7 +117,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
     private void getDiagonal2() {
         int row = position.getRow()+1;
         int col = position.getColumn()-1;
-        while (row < 8 && col >= 0) {
+        while (row < 9 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -136,7 +136,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
     private void getDiagonal3() {
         int row = position.getRow()-1;
         int col = position.getColumn()-1;
-        while (row >= 0 && col >= 0) {
+        while (row >= 1 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -155,7 +155,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
     private void getDiagonal4() {
         int row = position.getRow()-1;
         int col = position.getColumn()+1;
-        while (row < 8 && col < 8) {
+        while (row >=1  && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
             if (checkPosition(pos)) {
                 ChessMove move = new ChessMove(position, pos, null);
@@ -171,6 +171,5 @@ public class QueenMoveCalc implements PieceMoveCalc {
             }
         }
     }
-
 }
 
