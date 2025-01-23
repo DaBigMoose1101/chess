@@ -4,26 +4,36 @@ import java.util.ArrayList;
 
 
 public class PawnMoveCalc implements PieceMoveCalc{
-    private ChessBoard board;
-    private ChessPosition position;
+    private final ChessBoard board;
+    private final ChessPosition position;
     private Collection<ChessMove> moves;
-    private ChessPiece.PieceType type;
-    private ChessGame.TeamColor color;
+    private final ArrayList<ChessPiece.PieceType> types = new ArrayList<>();
+    private final ChessGame.TeamColor color;
     public PawnMoveCalc(ChessBoard board, ChessPosition position){
         this.board = board;
         this.position = position;
         this.moves = new ArrayList<>();
-        this.type = null;
+        types.add(ChessPiece.PieceType.BISHOP);
+        types.add(ChessPiece.PieceType.KNIGHT);
+        types.add(ChessPiece.PieceType.QUEEN);
+        types.add(ChessPiece.PieceType.ROOK);
         this.color = board.getPiece(position).getTeamColor();
     }
     @Override
     public Collection<ChessMove> getMoves(){
+        int row1;
+        int row2;
         if(color == ChessGame.TeamColor.WHITE){
-            getWhiteMoves();
+            row1 = position.getRow() + 1;
+            row2 = position.getRow() + 2;
+            calcMovesWhite(row1, row2);
         }
         else{
-            getBlackMoves();
+            row1 = position.getRow() - 1;
+            row2 = position.getRow() - 2;
+            calcMovesBlack(row1, row2);
         }
+
 
         return moves;
     }
@@ -46,89 +56,85 @@ public class PawnMoveCalc implements PieceMoveCalc{
         }
         return false;
     }
-    //talk to TA's about implementation
-    private ChessPiece.PieceType getPromotionPiece(){
 
-        return null;
-    }
+    private void moveForward(ChessPosition pos, int row){
+        if(row == 8 || row == 1){
+            promotionMoves(pos);
 
-    private void getWhiteMoves() {
-        int row = position.getRow();
-        int col = position.getColumn();
-        int row1 = row + 1;
-        int row2 = row + 2;
-        //check promotion
-        if(row1 == 8){
-            type = getPromotionPiece();
         }
-        //starting move
-        ChessPosition pos1 = new ChessPosition(row1, col);
-        ChessPosition pos2 = new ChessPosition(row2, col);
-        if (row == 2) {
-            if (checkPosition(pos2) && checkPosition(pos1)) {
-                ChessMove move = new ChessMove(position, pos2, type);
-                moves.add(move);
-            }
-        }
-        if (checkPosition(pos1)) {
-            ChessMove move = new ChessMove(position, pos1, type);
+        else{
+            ChessMove move = new ChessMove(position, pos, null);
             moves.add(move);
         }
-        //attack moves
-        if(isValidMove(row1, col +1 )) {
-            ChessPosition attack_pos = new ChessPosition(row1, col + 1);
-
-            if(canAttack(attack_pos)){
-                ChessMove move = new ChessMove(position, attack_pos, type);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row1, col - 1)) {
-            ChessPosition attack_pos = new ChessPosition(row1, col - 1);
-            if(canAttack(attack_pos)){
-                ChessMove move = new ChessMove(position, attack_pos, type);
-                moves.add(move);
-            }
-        }
-
-
     }
-    private void getBlackMoves(){
-        int row = position.getRow();
-        int col = position.getColumn();
-        int row1 = row - 1;
-        int row2 = row - 2;
-        //check promotion
-        if(row1 == 1){
-            type = getPromotionPiece();
-        }
-        //starting move
-        ChessPosition pos1 = new ChessPosition(row1, col);
-        ChessPosition pos2 = new ChessPosition(row2, col);
-        if (row == 7) {
-            if (checkPosition(pos2) && checkPosition(pos1)) {
-                ChessMove move = new ChessMove(position, pos2, type);
-                moves.add(move);
-            }
-        }
-        if (checkPosition(pos1)) {
-            ChessMove move = new ChessMove(position, pos1, type);
+
+    private void promotionMoves(ChessPosition pos){
+        for(ChessPiece.PieceType p : types){
+            ChessMove move = new ChessMove(position, pos, p);
             moves.add(move);
         }
-        //attack moves
-        if(isValidMove(row1, col +1 )) {
-            ChessPosition attack_pos = new ChessPosition(row1, col + 1);
-            if(canAttack(attack_pos)){
-                ChessMove move = new ChessMove(position, attack_pos, type);
+    }
+
+    private void Attack(ChessPosition pos, int row){
+        if(row == 8 || row == 1){
+            promotionMoves(pos);
+        }
+        else{
+            ChessMove move = new ChessMove(position, pos, null);
+            moves.add(move);
+        }
+    }
+    private void calcMovesWhite(int row1, int row2) {
+        //first move option
+        if (position.getRow() == 2) {
+            ChessPosition pos1 = new ChessPosition(row1, position.getColumn());
+            ChessPosition pos2 = new ChessPosition(row2, position.getColumn());
+            if (checkPosition(pos1) && checkPosition(pos2)) {
+                ChessMove move = new ChessMove(position, pos2, null);
                 moves.add(move);
             }
         }
-        if(isValidMove(row1, col - 1)) {
-            ChessPosition attack_pos = new ChessPosition(row1, col - 1);
-            if(canAttack(attack_pos)){
-                ChessMove move = new ChessMove(position, attack_pos, type);
-                moves.add(move);
+        //regular moves
+        for(int i = position.getColumn()-1; i <= position.getColumn() + 1; i++){
+            if(isValidMove(row1, i)){
+                ChessPosition pos = new ChessPosition(row1, i);
+                //attack moves
+                if((i == position.getColumn()-1 || i == position.getColumn()+1) && canAttack(pos)){
+                    Attack(pos, row1);
+                }
+                //forward move
+                else if(checkPosition(pos) && i == position.getColumn()){
+                    moveForward(pos, row1);
+                }
             }
         }
+
+    }
+    private void calcMovesBlack(int row1, int row2) {
+        //first move option
+        if (position.getRow() == 7) {
+            ChessPosition pos1 = new ChessPosition(row1, position.getColumn());
+            ChessPosition pos2 = new ChessPosition(row2, position.getColumn());
+            if (checkPosition(pos1) && checkPosition(pos2)) {
+                ChessMove move = new ChessMove(position, pos2, null);
+                moves.add(move);
+            }
+
+        }
+        //regular moves
+        for(int i = position.getColumn()-1; i <= position.getColumn() + 1; i++){
+            if(isValidMove(row1, i)){
+                ChessPosition pos = new ChessPosition(row1, i);
+                //attack moves
+                if((i == position.getColumn()-1 || i == position.getColumn()+1) && canAttack(pos)){
+                    Attack(pos, row1);
+                }
+                //forward move
+                else if(checkPosition(pos) && i == position.getColumn()){
+                    moveForward(pos, row1);
+                }
+            }
+        }
+
     }
 }
