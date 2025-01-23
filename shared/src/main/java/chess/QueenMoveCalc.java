@@ -23,13 +23,7 @@ public class QueenMoveCalc implements PieceMoveCalc {
         return moves;
     }
     private boolean checkPosition(ChessPosition pos){
-        if(board.getPiece(position) == null){
-            return true;
-        }
-        return false;
-    }
-    private boolean isValidMove(int row, int col){
-        if (row >= 0 && row < 8 && col >= 0 && col < 8){
+        if(board.getPiece(pos) == null){
             return true;
         }
         return false;

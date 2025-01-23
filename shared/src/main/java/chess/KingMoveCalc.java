@@ -7,11 +7,12 @@ import java.util.ArrayList;
 public class KingMoveCalc implements PieceMoveCalc{
     private ChessBoard board;
     private ChessPosition position;
-    private Collection<ChessMove> moves = new ArrayList<>();
+    private Collection<ChessMove> moves;
 
     public KingMoveCalc(ChessBoard board, ChessPosition position){
         this.board = board;
         this.position = position;
+        this.moves = new ArrayList<>();
     }
     @Override
     public Collection<ChessMove> getMoves() {
@@ -74,7 +75,7 @@ public class KingMoveCalc implements PieceMoveCalc{
         return moves;
     }
     private boolean checkPosition(ChessPosition pos){
-        if(board.getPiece(position) == null || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
+        if(board.getPiece(pos) == null || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
             return true;
         }
         return false;
