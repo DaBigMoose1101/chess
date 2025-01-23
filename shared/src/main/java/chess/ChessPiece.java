@@ -75,6 +75,10 @@ public class ChessPiece {
                 RookMoveCalc rook = new RookMoveCalc(board, myPosition);
                 moves = rook.getMoves();
                 break;
+            case PAWN:
+                PawnMoveCalc pawn = new PawnMoveCalc(board, myPosition);
+                moves = pawn.getMoves();
+                break;
             default:
                 throw new IllegalArgumentException("Invalid piece type: " + Type);
 

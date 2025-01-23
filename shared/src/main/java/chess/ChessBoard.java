@@ -13,7 +13,6 @@ public class ChessBoard {
     private ChessPiece[][] chessBoard = new ChessPiece[8][8];
     public ChessBoard() {
         clearBoard();
-        resetBoard();
     }
 
     /**
@@ -23,7 +22,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        this.chessBoard[position.getRow()][position.getColumn()] = piece;
+        int row_index = 8-position.getRow();
+        int column_index = position.getColumn()-1;
+        this.chessBoard[row_index][column_index] = piece;
     }
 
     /**
@@ -34,7 +35,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return this.chessBoard[position.getRow()][position.getColumn()];
+        return this.chessBoard[8-position.getRow()][position.getColumn()-1];
     }
 
     /**
@@ -48,40 +49,40 @@ public class ChessBoard {
             if (i == 0 || i == 7){
                 ChessPiece r = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                 ChessPiece R = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-                ChessPosition pos1 = new ChessPosition(0, i);
-                ChessPosition pos2 = new ChessPosition(7, i);
+                ChessPosition pos1 = new ChessPosition(8, i+1);
+                ChessPosition pos2 = new ChessPosition(1, i+1);
                 addPiece(pos1, r);
                 addPiece(pos2, R);
             }
             if (i == 1 || i == 6){
                 ChessPiece n = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
                 ChessPiece N = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-                ChessPosition pos1 = new ChessPosition(0, i);
-                ChessPosition pos2 = new ChessPosition(7, i);
+                ChessPosition pos1 = new ChessPosition(8, i+1);
+                ChessPosition pos2 = new ChessPosition(1, i+1);
                 addPiece(pos1, n);
                 addPiece(pos2, N);
             }
             if (i == 2 || i == 5){
                 ChessPiece b = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
                 ChessPiece B = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-                ChessPosition pos1 = new ChessPosition(0, i);
-                ChessPosition pos2 = new ChessPosition(7, i);
+                ChessPosition pos1 = new ChessPosition(8, i+1);
+                ChessPosition pos2 = new ChessPosition(1, i+1);
                 addPiece(pos1, b);
                 addPiece(pos2, B);
             }
             if (i == 3){
                 ChessPiece q = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
                 ChessPiece Q = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-                ChessPosition pos1 = new ChessPosition(0, i);
-                ChessPosition pos2 = new ChessPosition(7, i);
+                ChessPosition pos1 = new ChessPosition(8, i+1);
+                ChessPosition pos2 = new ChessPosition(1, i+1);
                 addPiece(pos1, q);
                 addPiece(pos2, Q);
             }
             if (i == 4){
                 ChessPiece k = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
                 ChessPiece K = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-                ChessPosition pos1 = new ChessPosition(0, i);
-                ChessPosition pos2 = new ChessPosition(7, i);
+                ChessPosition pos1 = new ChessPosition(8, i+1);
+                ChessPosition pos2 = new ChessPosition(1, i+1);
                 addPiece(pos1, k);
                 addPiece(pos2, K);
             }
@@ -90,8 +91,8 @@ public class ChessBoard {
         for(int i = 0; i < 8; i++){
             ChessPiece p = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
             ChessPiece P = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            ChessPosition pos1 = new ChessPosition(1, i);
-            ChessPosition pos2 = new ChessPosition(6, i);
+            ChessPosition pos1 = new ChessPosition(7, i+1);
+            ChessPosition pos2 = new ChessPosition(2, i+1);
             addPiece(pos1, p);
             addPiece(pos2, P);
         }
