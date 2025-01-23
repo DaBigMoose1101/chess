@@ -24,63 +24,27 @@ public class KnightMoveCalc implements PieceMoveCalc{
         int col2 = col + 2;
         int col3 = col - 1;
         int col4 = col - 2;
-        if(isValidMove(row1, col1)){
-            ChessPosition pos = new ChessPosition(row1, col1);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row1, col3)){
-            ChessPosition pos = new ChessPosition(row1, col3);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row2, col2)){
-            ChessPosition pos = new ChessPosition(row2, col2);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row2, col4)){
-            ChessPosition pos = new ChessPosition(row2, col4);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row3, col1)){
-            ChessPosition pos = new ChessPosition(row3, col1);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row3, col3)){
-            ChessPosition pos = new ChessPosition(row3, col3);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row4, col2)){
-            ChessPosition pos = new ChessPosition(row4, col2);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
-        if(isValidMove(row4, col4)){
-            ChessPosition pos = new ChessPosition(row4, col4);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-        }
+        addMove(row1, col1);
+        addMove(row1, col3);
+
+        addMove(row2, col2);
+        addMove(row2, col4);
+
+        addMove(row3, col1);
+        addMove(row3, col3);
+
+        addMove(row4, col2);
+        addMove(row4, col4);
         return moves;
+    }
+    private void addMove(int row, int col){
+        if(isValidMove(row, col)){
+            ChessPosition pos = new ChessPosition(row, col);
+            if(checkPosition(pos)){
+                ChessMove move = new ChessMove(position, pos, null);
+                moves.add(move);
+            }
+        }
     }
 
     private boolean checkPosition(ChessPosition pos){
