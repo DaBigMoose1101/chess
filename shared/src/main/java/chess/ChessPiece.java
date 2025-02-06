@@ -11,8 +11,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece implements Cloneable {
-    private ChessGame.TeamColor Color;
-    private ChessPiece.PieceType Type;
+    private final ChessGame.TeamColor Color;
+    private final ChessPiece.PieceType Type;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.Color = pieceColor;
         this.Type = type;
