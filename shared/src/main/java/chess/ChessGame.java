@@ -34,6 +34,14 @@ public class ChessGame {
         this.turn = team;
     }
 
+    private void changeTurn(){
+        if(turn == TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        }
+        else{
+            setTeamTurn(TeamColor.WHITE);
+        }
+    }
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -80,8 +88,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
-        if(valid.contains(move)){
-            board.makeMove(move);
+        if(board.getPiece(move.getStartPosition()) != null && valid.contains(move)
+                && turn == board.getPiece(move.getStartPosition()).getTeamColor()) {
+                board.makeMove(move);
+                changeTurn();
         }
         else{
             InvalidMoveException e = new InvalidMoveException();
