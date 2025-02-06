@@ -79,7 +79,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if(valid.contains(move)){
+            board.makeMove(move);
+        }
+        else{
+            InvalidMoveException e = new InvalidMoveException();
+            throw e;
+        }
     }
 
     /**
