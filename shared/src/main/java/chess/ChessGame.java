@@ -172,7 +172,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean stalemate = true;
         ChessPosition pos;
-        if(!isInCheck(turn)){
+        if(!isInCheck(teamColor)){
             for(int i = 1; i < 9; i++){
                 for(int j = 1; j < 9 ; j++){
                     pos = new ChessPosition(i, j);
