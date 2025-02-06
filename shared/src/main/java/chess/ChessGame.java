@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -50,22 +51,25 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> moves;
+        Collection<ChessMove>result = new ArrayList<>();
         ChessBoard original = board;
         if(board.getPiece(startPosition) == null){
             return null;
         }
         ChessPiece piece = board.getPiece(startPosition);
+        TeamColor color = piece.getTeamColor();
         moves = piece.pieceMoves(board, startPosition);
         for(ChessMove move : moves){
             ChessBoard clone = board.clone();
             clone.makeMove(move);
             setBoard(clone);
-            if(isInCheck(turn)){
-                moves.remove(move);
+            if(!isInCheck(color)){
+                result.add(move);
             }
+            setBoard(original);
         }
-        setBoard(original);
-        return moves;
+
+        return result;
     }
 
     /**
@@ -95,7 +99,7 @@ public class ChessGame {
                 if(piece != null && piece.getTeamColor() != teamColor){
                     Collection<ChessMove> moves = piece.pieceMoves(board, pos);
                     check = isKing(moves, teamColor);
-                    break;
+                    if(check){break;}
                 }
             }
         }
@@ -106,7 +110,7 @@ public class ChessGame {
         boolean foundKing = false;
         for(ChessMove move: moves){
             ChessPiece piece = board.getPiece(move.getEndPosition());
-            if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == color){
+            if(piece!=null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == color){
                 foundKing = true;
                 break;
             }
