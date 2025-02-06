@@ -99,8 +99,11 @@ public class ChessGame {
                 if(piece != null && piece.getTeamColor() != teamColor){
                     Collection<ChessMove> moves = piece.pieceMoves(board, pos);
                     check = isKing(moves, teamColor);
-                    if(check){break;}
+                    if(check){
+                        return check;
+                    }
                 }
+
             }
         }
         return check;
