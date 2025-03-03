@@ -1,17 +1,23 @@
 package dataaccess;
 import java.util.ArrayList;
 import chess.ChessGame;
+import model.AuthData;
+import model.UserData;
 
 public class GameDAO {
+    private ArrayList<ChessGame> games;
+    private UserData user;
+    private AuthData token;
+
     public void createGame(){
 
     }
     public void getGame(){
 
     }
-    public ArrayList<String> listGames(){
+    public ArrayList<ChessGame> listGames(){
 
-        return null;
+        return games;
     }
     public void updateGame(){
 
