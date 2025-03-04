@@ -9,6 +9,9 @@ import records.*;
 import chess.ChessGame;
 import chess.ChessGame.TeamColor;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class GameService {
     final AuthDAO authDataAccess;
     final GameDAO gameDataAccess;
@@ -31,7 +34,7 @@ public class GameService {
             return new CreateGameResponse(gameID);
         }
         catch(DataAccessException e){
-            return e;
+           return handleError(e);
         }
 
     }
@@ -45,19 +48,37 @@ public class GameService {
             return new JoinGameResponse("");
         }
         catch(DataAccessException e){
-            return e;
+            return handleError(e);
+
         }
     }
 
-    public Object getGameList(GamesListRequest req, String authToken){
+    public Object getGameList(GamesListRequest req){
+        String authToken = req.authToken();
+        Vector<GameData> returnData = new Vector<>();
+        try {
+            validateUser(authToken);
+            ArrayList<GameData> gameList = gameDataAccess.listGames();
+            for(GameData game: gameList){
+                int id = game.gameID();
+                String white = game.whiteUsername();
+                String black = game.blackUsername();
+                String name = game.gameName();
+                GameData gameData = new GameData(id, white, black, name, null);
+                returnData.add(gameData);
+            }
+            return new GamesListResponse(returnData);
+        }
+        catch(DataAccessException e){
+            return handleError(e);
+        }
 
-        return null;
     }
 
     private AuthData validateUser(String authToken) throws DataAccessException{
         AuthData data = authDataAccess.getAuthToken(authToken);
         if(data == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new DataAccessException("Error: Unauthorized");
         }
         return data;
     }
@@ -65,6 +86,17 @@ public class GameService {
     private int generateGameID(){
         int numOfGames = gameDataAccess.getGameListSize();
         return numOfGames + 1;
+    }
+
+    private ErrorResponse handleError(DataAccessException e){
+        String message = e.getMessage();
+
+        return switch (message) {
+            case "Error: Bad request" -> new ErrorResponse(400, message);
+            case "Error: Unauthorized" -> new ErrorResponse(401, message);
+            case "Error: Already Taken" -> new ErrorResponse(403, message);
+            default -> new ErrorResponse(500, message);
+        };
     }
 
 }

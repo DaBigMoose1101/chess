@@ -7,12 +7,13 @@ import java.util.ArrayList;
 public class GameMemoryDAO implements GameDAO{
     private ArrayList<GameData> gameList;
 
+    public GameMemoryDAO(){
+        gameList = new ArrayList<>();
+    }
+
     @Override
-    public void createGame(GameData gameData) throws DataAccessException{
+    public void createGame(GameData gameData){
         gameList.add(gameData);
-        if(getGame(gameData.gameID()) == null){
-            throw new DataAccessException("Failed to create game.");
-        }
     }
 
     @Override
@@ -37,13 +38,44 @@ public class GameMemoryDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID){
-
+    public void updateGame(GameData game, ChessGame updatedGame){
+        GameData temp = new GameData(game.gameID(), game.whiteUsername(),
+                game.blackUsername(), game.gameName(), updatedGame);
+        deleteGame(game);
+        createGame(temp);
     }
 
     @Override
-    public void deleteGame(int gameID){
-        GameData game = getGame(gameID);
+    public void updateGameName(GameData game, String newName){
+        GameData temp = new GameData(game.gameID(), game.whiteUsername(),
+                game.blackUsername(), newName, game.game());
+        deleteGame(game);
+        createGame(temp);
+    }
+
+    @Override
+    public void updateGameColor(GameData game, String username,
+                                ChessGame.TeamColor color) throws DataAccessException{
+        switch(color){
+            case BLACK:
+                GameData tempBlack = new GameData(game.gameID(), game.whiteUsername(),
+                        username, game.gameName(), game.game());
+                deleteGame(game);
+                createGame(tempBlack);
+                break;
+            case WHITE:
+                GameData tempWhite = new GameData(game.gameID(), username,
+                        game.whiteUsername(), game.gameName(), game.game());
+                deleteGame(game);
+                createGame(tempWhite);
+                break;
+            default:
+                throw new DataAccessException("Error: unable to update user color");
+        }
+    }
+
+    @Override
+    public void deleteGame(GameData game){
         gameList.remove(game);
     }
 
@@ -51,19 +83,33 @@ public class GameMemoryDAO implements GameDAO{
     public void joinGame(int gameID, ChessGame.TeamColor color, String username) throws DataAccessException{
         GameData game = getGame(gameID);
         if(game == null){
-            throw new DataAccessException("Game does not exist");
+            throw new DataAccessException("Error: Bad request");
+        }
+        if( !hasSpace(game)){
+            throw new DataAccessException("Error: Game is full");
         }
         switch(color){
             case BLACK:
-                GameData tempBlack = new GameData(game.gameID(), game.whiteUsername(),
-                        username, game.gameName(), game.game());
-                break;
+                if(game.blackUsername().isEmpty()){
+                    updateGameColor(game, username, color);
+                    break;
+                }
+                else{
+                    throw new DataAccessException("Error: Already Taken");
+                }
             case WHITE:
-                GameData tempWhite = new GameData(game.gameID(), username,
-                        game.whiteUsername(), game.gameName(), game.game());
-            case null, default:
-                throw new DataAccessException("Invalid color choice");
+                if(game.whiteUsername().isEmpty()) {
+                    updateGameColor(game, username, color);
+                }
+                else{
+                    throw new DataAccessException("Error: Already Taken");
+                }
+            default:
+                throw new DataAccessException("Error: Already Taken");
         }
+    }
 
+    private boolean hasSpace(GameData game){
+        return game.whiteUsername().isEmpty() || game.blackUsername().isEmpty();
     }
 }

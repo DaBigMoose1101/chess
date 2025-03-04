@@ -7,8 +7,8 @@ import records.*;
 import service.GameService;
 
 public class GameHandler {
-    private GameDAO gameDataAccess;
-    private AuthDAO authDataAccess;
+    final private GameDAO gameDataAccess;
+    final private AuthDAO authDataAccess;
 
     public GameHandler(AuthDAO authDataAccess, GameDAO gameDataAccess){
         this.authDataAccess = authDataAccess;
@@ -29,11 +29,11 @@ public class GameHandler {
         return serializer.toJson(service.joinGame(req, authToken));
     }
 
-    public String getGameList(String authToken, String body){
+    public String getGameList(String authToken){
         var serializer = new Gson();
-        GamesListRequest req = serializer.fromJson(body, GamesListRequest.class);
+        GamesListRequest req = new GamesListRequest(authToken);
         GameService service = new GameService(authDataAccess, gameDataAccess);
-        return serializer.toJson(service.getGameList(req, authToken));
+        return serializer.toJson(service.getGameList(req));
     }
 
 }

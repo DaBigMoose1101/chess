@@ -69,7 +69,7 @@ public class Server {
 
     private Object getGameList(Request req, Response res){
         GameHandler handler = new GameHandler(authDataAccess, gameDataAccess);
-        return handler.getGameList(req.headers("authorization"), req.body());
+        return handler.getGameList(req.headers("authorization"));
     }
 
     private Object clearServer(Request req, Response res){
