@@ -3,8 +3,8 @@ package dataaccess;
 import model.UserData;
 
 public interface UserDAO {
-    public void createUser();
-    public void readUser();
-    public void updateUser();
-    public void deleteUser(String username);
+    public void addUser(UserData user);
+    public UserData getUser(UserData user);
+    public void updateUser(UserData user) throws DataAccessException;
+    public void deleteUser(UserData user);
 }
