@@ -2,16 +2,19 @@ package server;
 
 
 
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryDAO;
+import dataaccess.*;
 import handler.UserHandler;
 import spark.*;
 
 public class Server {
     private UserDAO userDataAccess;
+    private AuthDAO authDataAccess;
+    private GameDAO gameDataAccess;
 
     public Server(){
         this.userDataAccess = new UserMemoryDAO();
+        this.authDataAccess = new AuthMemoryDAO();
+        this.gameDataAccess = new GameMemoryDAO();
 
     }
     public int run(int desiredPort) {
@@ -21,7 +24,8 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::register);
-
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -36,18 +40,19 @@ public class Server {
         Spark.awaitStop();
     }
     private Object register(Request req, Response res) {
-        UserHandler handler = new UserHandler(userDataAccess);
+        UserHandler handler = new UserHandler(userDataAccess, authDataAccess);
         return handler.register(req.body());
     }
 
     private Object login(Request req, Response res){
-
-        return null;
+        UserHandler handler = new UserHandler(userDataAccess, authDataAccess);
+        return handler.login(req.body());
     }
 
     private Object logout(Request req, Response res){
+        UserHandler handler = new UserHandler(userDataAccess, authDataAccess);
+        return handler.logout(req.headers("Authorization"));
 
-        return null;
     }
 
     private Object createNewGame(Request req, Response res){

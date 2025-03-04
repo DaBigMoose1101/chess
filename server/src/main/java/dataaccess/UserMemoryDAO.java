@@ -16,10 +16,11 @@ public class UserMemoryDAO implements UserDAO {
     }
 
     @Override
-    public UserData getUser(UserData user){
+    public UserData getUser(String username){
         for(UserData currentUser: userDataVector){
-            if(currentUser.equals(user)){
-                return user;
+            String currentUsername = currentUser.username();
+            if(currentUsername.equals(username)){
+                return currentUser;
             }
         }
        return null;
@@ -27,7 +28,7 @@ public class UserMemoryDAO implements UserDAO {
 
     @Override
     public void updateUser(UserData user) throws DataAccessException{
-        if(getUser(user) == null){
+        if(getUser(user.username()) == null){
             throw new DataAccessException("User Doesn't Exist");
         }
         deleteUser(user);
