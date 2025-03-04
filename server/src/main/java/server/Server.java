@@ -3,6 +3,7 @@ package server;
 
 
 import dataaccess.*;
+import handler.GameHandler;
 import handler.UserHandler;
 import spark.*;
 
@@ -26,6 +27,7 @@ public class Server {
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -51,20 +53,23 @@ public class Server {
 
     private Object logout(Request req, Response res){
         UserHandler handler = new UserHandler(userDataAccess, authDataAccess);
-        return handler.logout(req.headers("Authorization"));
+        return handler.logout(req.headers("authorization"));
 
     }
 
-    private Object createNewGame(Request req, Response res){
-        return null;
+    private Object createGame(Request req, Response res){
+        GameHandler handler = new GameHandler(authDataAccess, gameDataAccess);
+        return handler.createGame(req.headers("authorization"), req.body());
     }
 
     private Object joinGame(Request req, Response res){
-        return null;
+        GameHandler handler = new GameHandler(authDataAccess, gameDataAccess);
+        return handler.joinGame(req.headers("authorization"), req.body());
     }
 
     private Object getGameList(Request req, Response res){
-        return null;
+        GameHandler handler = new GameHandler(authDataAccess, gameDataAccess);
+        return handler.getGameList(req.headers("authorization"), req.body());
     }
 
     private Object clearServer(Request req, Response res){
