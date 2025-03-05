@@ -70,7 +70,7 @@ public class GameMemoryDAO implements GameDAO{
                 createGame(tempWhite);
                 break;
             default:
-                throw new DataAccessException("Error: unable to update user color");
+                throw new DataAccessException("Error: Invalid Color");
         }
     }
 
@@ -104,6 +104,7 @@ public class GameMemoryDAO implements GameDAO{
                 else{
                     throw new DataAccessException("Error: Already Taken");
                 }
+                break;
             default:
                 throw new DataAccessException("Error: Already Taken");
         }
