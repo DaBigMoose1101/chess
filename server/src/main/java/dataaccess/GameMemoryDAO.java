@@ -82,7 +82,7 @@ public class GameMemoryDAO implements GameDAO{
     @Override
     public void joinGame(int gameID, ChessGame.TeamColor color, String username) throws DataAccessException{
         GameData game = getGame(gameID);
-        if(game == null){
+        if(game == null || color == null){
             throw new DataAccessException("Error: Bad request");
         }
         if( !hasSpace(game)){
