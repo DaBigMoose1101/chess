@@ -45,4 +45,13 @@ public class UserMemoryDAO implements UserDAO {
             deleteUser(user);
         }
     }
+
+    public boolean isAvailable(String attr){
+        for(UserData user : userDataVector){
+            if(user.password().equals(attr) || user.email().equals(attr) || user.username().equals(attr)){
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -16,7 +16,7 @@ public class AuthMemoryDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuthToken(String token){
+    public AuthData getAuthToken(String token) throws DataAccessException {
         for(AuthData currentData: authDataVector){
             String currentToken = currentData.authToken();
             if(currentToken.equals(token)){
@@ -27,21 +27,29 @@ public class AuthMemoryDAO implements AuthDAO {
     }
 
     @Override
-    public void updateAuthToken(AuthData token) {
-        if(getAuthToken(token.authToken()) != null){
-            deleteAuthToken(token);
-            addAuthToken(token);
+    public void updateAuthToken(AuthData token) throws DataAccessException {
+        try {
+            if(getAuthToken(token.authToken()) != null){
+                deleteAuthToken(token);
+                addAuthToken(token);
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void deleteAuthToken(AuthData token){
+    public void deleteAuthToken(AuthData token) throws DataAccessException {
         authDataVector.remove(token);
     }
 
     public void deleteDB(){
         for(AuthData token : authDataVector){
-            deleteAuthToken(token);
+            try {
+                deleteAuthToken(token);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
