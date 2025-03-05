@@ -8,5 +8,5 @@ public interface UserDAO {
     public void updateUser(UserData user) throws DataAccessException;
     public void deleteUser(UserData user) throws DataAccessException;
     public boolean isAvailable(String attr);
-    public void deleteDB();
+    public void deleteDB() throws DataAccessException;
 }

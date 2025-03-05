@@ -1,9 +1,11 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import records.ClearResponse;
+import records.ErrorResponse;
 
 public class ClearDatabaseService {
     final private AuthDAO authDataAccess;
@@ -17,9 +19,24 @@ public class ClearDatabaseService {
     }
 
     public Object deleteDB(){
-        authDataAccess.deleteDB();
-        userDataAccess.deleteDB();
-        gameDataAccess.deleteDB();
-        return new ClearResponse(null);
+        try {
+            authDataAccess.deleteDB();
+            userDataAccess.deleteDB();
+            gameDataAccess.deleteDB();
+            return new ClearResponse(null);
+        }
+        catch (DataAccessException e){
+            return handleError(e);
+        }
+    }
+    private ErrorResponse handleError(DataAccessException e){
+        String message = e.getMessage();
+
+        return switch (message) {
+            case "Error: Bad request" -> new ErrorResponse(400, message);
+            case "Error: Unauthorized" -> new ErrorResponse(401, message);
+            case "Error: Already Taken" -> new ErrorResponse(403, message);
+            default -> new ErrorResponse(500, message);
+        };
     }
 }
