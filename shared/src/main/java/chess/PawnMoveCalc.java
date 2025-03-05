@@ -75,7 +75,7 @@ public class PawnMoveCalc implements PieceMoveCalc{
         }
     }
 
-    private void Attack(ChessPosition pos, int row){
+    private void attack(ChessPosition pos, int row){
         if(row == 8 || row == 1){
             promotionMoves(pos);
         }
@@ -100,7 +100,7 @@ public class PawnMoveCalc implements PieceMoveCalc{
                 ChessPosition pos = new ChessPosition(row1, i);
                 //attack moves
                 if((i == position.getColumn()-1 || i == position.getColumn()+1) && canAttack(pos)){
-                    Attack(pos, row1);
+                    attack(pos, row1);
                 }
                 //forward move
                 else if(checkPosition(pos) && i == position.getColumn()){
@@ -127,7 +127,7 @@ public class PawnMoveCalc implements PieceMoveCalc{
                 ChessPosition pos = new ChessPosition(row1, i);
                 //attack moves
                 if((i == position.getColumn()-1 || i == position.getColumn()+1) && canAttack(pos)){
-                    Attack(pos, row1);
+                    attack(pos, row1);
                 }
                 //forward move
                 else if(checkPosition(pos) && i == position.getColumn()){

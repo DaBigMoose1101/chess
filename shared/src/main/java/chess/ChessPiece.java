@@ -11,11 +11,11 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece implements Cloneable {
-    private final ChessGame.TeamColor Color;
-    private final ChessPiece.PieceType Type;
+    private final ChessGame.TeamColor color;
+    private final ChessPiece.PieceType type;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.Color = pieceColor;
-        this.Type = type;
+        this.color = pieceColor;
+        this.type = type;
     }
 
     @Override
@@ -24,12 +24,12 @@ public class ChessPiece implements Cloneable {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-        return Color == that.Color && Type == that.Type;
+        return color == that.color && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Color, Type);
+        return Objects.hash(color, type);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ChessPiece implements Cloneable {
      */
     public ChessGame.TeamColor getTeamColor() {
 
-        return Color;
+        return color;
     }
 
     /**
@@ -57,7 +57,7 @@ public class ChessPiece implements Cloneable {
      */
     public PieceType getPieceType() {
 
-        return Type;
+        return type;
     }
 
     /**
@@ -69,7 +69,7 @@ public class ChessPiece implements Cloneable {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves;
-        switch(Type) {
+        switch(type) {
             case KING:
                 KingMoveCalc king = new KingMoveCalc(board, myPosition);
                 moves = king.getMoves();
@@ -95,7 +95,7 @@ public class ChessPiece implements Cloneable {
                 moves = pawn.getMoves();
                 break;
             default:
-                throw new IllegalArgumentException("Invalid piece type: " + Type);
+                throw new IllegalArgumentException("Invalid piece type: " + type);
 
         }
         return moves;

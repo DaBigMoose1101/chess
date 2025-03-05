@@ -8,8 +8,8 @@ public class BishopMoveCalc implements PieceMoveCalc {
     private ChessPosition position;
     private Collection<ChessMove> moves;
 
-    public BishopMoveCalc(ChessBoard Board, ChessPosition pos){
-        this.board = Board;
+    public BishopMoveCalc(ChessBoard board, ChessPosition pos){
+        this.board = board;
         this.position = pos;
         this.moves = new ArrayList<>();
     }
