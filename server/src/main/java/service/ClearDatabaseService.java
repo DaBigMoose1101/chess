@@ -19,16 +19,12 @@ public class ClearDatabaseService {
     }
 
     public Object deleteDB(){
-        try {
-            authDataAccess.deleteDB();
-            userDataAccess.deleteDB();
-            gameDataAccess.deleteDB();
-            return new ClearResponse(null);
-        }
-        catch (DataAccessException e){
-            return handleError(e);
-        }
+        authDataAccess.deleteDB();
+        userDataAccess.deleteDB();
+        gameDataAccess.deleteDB();
+        return new ClearResponse(null);
     }
+
     private ErrorResponse handleError(DataAccessException e){
         String message = e.getMessage();
 

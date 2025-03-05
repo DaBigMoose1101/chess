@@ -26,6 +26,7 @@ public class UserService {
             isAvailable(username, password, email);
             userDataAccess.addUser(user);
             String authToken = generateToken();
+            validateToken(authToken);
             AuthData authData = new AuthData(authToken, username);
             authDataAccess.addAuthToken(authData);
             return new RegisterResponse(username, authToken);
@@ -40,12 +41,12 @@ public class UserService {
         String password = req.password();
         UserData user = userDataAccess.getUser(username);
         try {
+            validateUsername(username);
             validatePassword(user, password);
             String authToken = generateToken();
             AuthData authData = new AuthData(authToken, username);
             authDataAccess.addAuthToken(authData);
             return new LoginResponse(username, authToken);
-
         }
         catch(DataAccessException e){
             return handleError(e);
@@ -82,11 +83,25 @@ public class UserService {
         }
     }
 
+    private void validateUsername(String username) throws DataAccessException{
+        if(userDataAccess.isAvailable(username)){
+            throw new DataAccessException("Error: Invalid username");
+        }
+    }
+
     private void isAvailable(String username, String password, String email) throws DataAccessException{
         if(!userDataAccess.isAvailable(username) || !userDataAccess.isAvailable(password)
                 || !userDataAccess.isAvailable(email)){
             throw new DataAccessException("Error: Already Taken");
         }
+    }
+
+    private String validateToken(String token){
+        if(authDataAccess.getAuthToken(token) == null){
+            return token;
+        }
+        String newToken = generateToken();
+        return validateToken(newToken);
     }
 
     private ErrorResponse handleError(DataAccessException e){

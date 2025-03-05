@@ -27,31 +27,20 @@ public class UserMemoryDAO implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserData user) throws DataAccessException{
-        if(getUser(user.username()) == null){
-            throw new DataAccessException("Error: User Doesn't Exist");
-        }
+    public void updateUser(UserData user){
         deleteUser(user);
         addUser(user);
     }
 
     @Override
-    public void deleteUser(UserData user) throws DataAccessException{
-        if(getUser(user.username()) == null){
-            throw new DataAccessException("Error: User Doesn't Exist");
-        }
+    public void deleteUser(UserData user){
         userDataVector.remove(user);
     }
 
-    public void deleteDB() throws DataAccessException{
-        try {
+    public void deleteDB(){
             for (UserData user : userDataVector) {
                 deleteUser(user);
             }
-        }
-        catch (DataAccessException e){
-            throw new DataAccessException(e.getMessage());
-        }
     }
 
     public boolean isAvailable(String attr){
