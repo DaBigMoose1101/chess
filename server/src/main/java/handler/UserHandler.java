@@ -17,42 +17,57 @@ public class UserHandler {
         this.res = res;
     }
 
-    public Response login(String body){
-        Gson serializer = new Gson();
-        LoginRequest req = serializer.fromJson(body, LoginRequest.class);
-        UserService service = new UserService(userDataAccess, authDataAccess);
-        return getResponse(service.login(req), serializer);
-    }
-
-    public Response register(String body){
+    public Object register(String body){
         Gson serializer = new Gson();
         RegisterRequest req = serializer.fromJson(body, RegisterRequest.class);
         UserService service = new UserService(userDataAccess, authDataAccess);
-        return getResponse(service.registerUser(req), serializer);
+        Object response = service.registerUser(req);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
+        }
+        else{
+            RegisterResponse temp = (RegisterResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
+        }
     }
 
-    public Response logout(String header){
+    public Object login(String body){
+        Gson serializer = new Gson();
+        LoginRequest req = serializer.fromJson(body, LoginRequest.class);
+        UserService service = new UserService(userDataAccess, authDataAccess);
+        Object response = service.login(req);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
+        }
+        else{
+            LoginResponse temp = (LoginResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
+        }
+
+    }
+
+    public Object logout(String header){
         Gson serializer = new Gson();
         LogoutRequest req = serializer.fromJson(header, LogoutRequest.class);
         UserService service = new UserService(userDataAccess, authDataAccess);
-        return getResponse(service.logout(req), serializer);
-    }
-
-    private Response getResponse(Object response, Gson serializer){
-        int code;
-        String responseBody;
-        if(response.getClass() == ErrorResponse.class){
-            ErrorResponse error = (ErrorResponse) response;
-            code = error.code();
-            responseBody = serializer.toJson(error);
+        Object response = service.logout(req);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
         }
         else{
-            CreateGameResponse createGame = (CreateGameResponse) response;
-            code = 200;
-            responseBody = serializer.toJson(createGame);
+            LogoutResponse temp = (LogoutResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
         }
-        res.status(code);
-        res.body(responseBody);
-        return res;
+
+
     }
 }

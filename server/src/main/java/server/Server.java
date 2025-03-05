@@ -44,38 +44,38 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Response register(Request req, Response res) {
+    private Object register(Request req, Response res) {
         UserHandler handler = new UserHandler(userDataAccess, authDataAccess, res);
         return handler.register(req.body());
     }
 
-    private Response login(Request req, Response res){
+    private Object login(Request req, Response res){
         UserHandler handler = new UserHandler(userDataAccess, authDataAccess, res);
         return handler.login(req.body());
     }
 
-    private Response logout(Request req, Response res){
+    private Object logout(Request req, Response res){
         UserHandler handler = new UserHandler(userDataAccess, authDataAccess, res);
         return handler.logout(req.headers("authorization"));
 
     }
 
-    private Response createGame(Request req, Response res){
+    private Object createGame(Request req, Response res){
         GameHandler handler = new GameHandler(authDataAccess, gameDataAccess, res);
         return handler.createGame(req.headers("authorization"), req.body());
     }
 
-    private Response joinGame(Request req, Response res){
+    private Object joinGame(Request req, Response res){
         GameHandler handler = new GameHandler(authDataAccess, gameDataAccess, res);
         return handler.joinGame(req.headers("authorization"), req.body());
     }
 
-    private Response getGameList(Request req, Response res){
+    private Object getGameList(Request req, Response res){
         GameHandler handler = new GameHandler(authDataAccess, gameDataAccess, res);
         return handler.getGameList(req.headers("authorization"));
     }
 
-    private Response clearServer(Request req, Response res){
+    private Object clearServer(Request req, Response res){
         DatabaseAdminHandler handler = new DatabaseAdminHandler(authDataAccess, userDataAccess, gameDataAccess, res);
         return handler.deleteDB();
     }
