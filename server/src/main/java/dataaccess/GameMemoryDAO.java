@@ -90,7 +90,7 @@ public class GameMemoryDAO implements GameDAO{
         }
         switch(color){
             case BLACK:
-                if(game.blackUsername().isEmpty()){
+                if(game.blackUsername() == null){
                     updateGameColor(game, username, color);
                     break;
                 }
@@ -98,7 +98,7 @@ public class GameMemoryDAO implements GameDAO{
                     throw new DataAccessException("Error: Already Taken");
                 }
             case WHITE:
-                if(game.whiteUsername().isEmpty()) {
+                if(game.whiteUsername() == null) {
                     updateGameColor(game, username, color);
                 }
                 else{
@@ -111,12 +111,10 @@ public class GameMemoryDAO implements GameDAO{
     }
 
     public void deleteDB(){
-        for(GameData game: gameList){
-            gameList.remove(game);
-        }
+        gameList = new ArrayList<>();
     }
 
     private boolean hasSpace(GameData game){
-        return game.whiteUsername().isEmpty() || game.blackUsername().isEmpty();
+        return game.whiteUsername() == null || game.blackUsername() == null;
     }
 }

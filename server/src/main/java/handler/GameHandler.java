@@ -18,43 +18,55 @@ public class GameHandler {
         this.res = res;
     }
 
-    public Response createGame(String authToken, String body){
+    public Object createGame(String authToken, String body){
         Gson serializer = new Gson();
         CreateGameRequest req = serializer.fromJson(body, CreateGameRequest.class);
         GameService service = new GameService(authDataAccess, gameDataAccess);
-        return getResponse(service.createGame(req, authToken), serializer);
+        Object response = service.createGame(req, authToken);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
+        }
+        else{
+            CreateGameResponse temp = (CreateGameResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
+        }
     }
 
-    public Response joinGame(String authToken, String body){
+    public Object joinGame(String authToken, String body){
         var serializer = new Gson();
         JoinGameRequest req = serializer.fromJson(body, JoinGameRequest.class);
         GameService service = new GameService(authDataAccess, gameDataAccess);
-        return getResponse(service.joinGame(req, authToken), serializer);
+        Object response = service.joinGame(req, authToken);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
+        }
+        else{
+            JoinGameResponse temp = (JoinGameResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
+        }
     }
 
-    public Response getGameList(String authToken){
+    public Object getGameList(String authToken){
         var serializer = new Gson();
         GamesListRequest req = new GamesListRequest(authToken);
         GameService service = new GameService(authDataAccess, gameDataAccess);
-        return getResponse(service.getGameList(req), serializer);
-    }
-
-    private Response getResponse(Object response, Gson serializer){
-        int code;
-        String responseBody;
-        if(response.getClass() == ErrorResponse.class){
-            ErrorResponse error = (ErrorResponse) response;
-            code = error.code();
-            responseBody = serializer.toJson(error);
+        Object response = service.getGameList(req);
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
         }
         else{
-            CreateGameResponse createGame = (CreateGameResponse) response;
-            code = 200;
-            responseBody = serializer.toJson(createGame);
+            GamesListResponse temp = (GamesListResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
         }
-        res.status(code);
-        res.body(responseBody);
-        return res;
     }
 
 }

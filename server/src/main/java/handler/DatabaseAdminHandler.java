@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import records.CreateGameResponse;
+import records.ClearResponse;
 import records.ErrorResponse;
+
 import service.ClearDatabaseService;
 import spark.Response;
 
@@ -22,27 +23,20 @@ public class DatabaseAdminHandler {
         this.res = res;
     }
 
-    public Response deleteDB(){
+    public Object deleteDB(){
         Gson serializer = new Gson();
         ClearDatabaseService service = new ClearDatabaseService(authDataAccess, userDataAccess, gameDataAccess);
-        return getResponse(service.deleteDB(), serializer);
-    }
-
-    private Response getResponse(Object response, Gson serializer){
-        int code;
-        String responseBody;
-        if(response.getClass() == ErrorResponse.class){
-            ErrorResponse error = (ErrorResponse) response;
-            code = error.code();
-            responseBody = serializer.toJson(error);
+        Object response = service.deleteDB();
+        if(response instanceof ErrorResponse){
+            ErrorResponse temp = (ErrorResponse) response;
+            res.status(temp.code());
+            return serializer.toJson(temp);
         }
         else{
-            CreateGameResponse createGame = (CreateGameResponse) response;
-            code = 200;
-            responseBody = serializer.toJson(createGame);
+            ClearResponse temp = (ClearResponse) response;
+            res.status(200);
+            return serializer.toJson(temp);
         }
-        res.status(code);
-        res.body(responseBody);
-        return res;
     }
+
 }

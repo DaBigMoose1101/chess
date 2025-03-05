@@ -25,8 +25,8 @@ public class GameService {
         try {
             validateUser(authToken);
             int gameID = generateGameID();
-            String whiteUsername = "";
-            String blackUsername = "";
+            String whiteUsername = null;
+            String blackUsername = null;
             String gameName = req.gameName();
             ChessGame game = new ChessGame();
             GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
@@ -43,9 +43,9 @@ public class GameService {
         try {
             AuthData authData = validateUser(authToken);
             String username = authData.username();
-            TeamColor color = req.color();
+            TeamColor color = req.playerColor();
             gameDataAccess.joinGame(req.gameID(), color, username);
-            return new JoinGameResponse("");
+            return new JoinGameResponse();
         }
         catch(DataAccessException e){
             return handleError(e);

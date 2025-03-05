@@ -1,4 +1,5 @@
 package service;
+import java.util.SplittableRandom;
 import java.util.UUID;
 
 import dataaccess.AuthDAO;
@@ -24,6 +25,7 @@ public class UserService {
         UserData user = new UserData(username, password, email);
         try {
             isAvailable(username, password, email);
+            validatePassword(password);
             userDataAccess.addUser(user);
             String authToken = generateToken();
             validateToken(authToken);
@@ -42,7 +44,7 @@ public class UserService {
         UserData user = userDataAccess.getUser(username);
         try {
             validateUsername(username);
-            validatePassword(user, password);
+            validateUser(user, password);
             String authToken = generateToken();
             AuthData authData = new AuthData(authToken, username);
             authDataAccess.addAuthToken(authData);
@@ -56,7 +58,7 @@ public class UserService {
     public Object logout(LogoutRequest req){
         String authToken = req.authToken();
         try{
-            validateUser(authToken);
+            validateAuthToken(authToken);
             AuthData token = authDataAccess.getAuthToken(authToken);
             authDataAccess.deleteAuthToken(token);
             return new LogoutResponse("");
@@ -70,14 +72,14 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    private void validateUser(String authToken) throws DataAccessException{
+    private void validateAuthToken(String authToken) throws DataAccessException{
         AuthData data = authDataAccess.getAuthToken(authToken);
         if(data == null) {
             throw new DataAccessException("Error: Unauthorized");
         }
     }
 
-    private void validatePassword(UserData user, String password) throws DataAccessException{
+    private void validateUser(UserData user, String password) throws DataAccessException{
         if(!password.equals(user.password())) {
             throw new DataAccessException("Error: Unauthorized");
         }
@@ -85,7 +87,13 @@ public class UserService {
 
     private void validateUsername(String username) throws DataAccessException{
         if(userDataAccess.isAvailable(username)){
-            throw new DataAccessException("Error: Invalid username");
+            throw new DataAccessException("Error: Unauthorized");
+        }
+    }
+
+    private void validatePassword(String password) throws DataAccessException{
+        if(password == null || password.isEmpty()){
+            throw new DataAccessException("Error: Bad request");
         }
     }
 

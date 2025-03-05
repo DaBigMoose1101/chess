@@ -1,4 +1,3 @@
 package records;
 
-public record JoinGameResponse(String Response) {
-}
+public record JoinGameResponse() { }

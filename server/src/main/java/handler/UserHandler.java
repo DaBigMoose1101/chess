@@ -54,7 +54,7 @@ public class UserHandler {
 
     public Object logout(String header){
         Gson serializer = new Gson();
-        LogoutRequest req = serializer.fromJson(header, LogoutRequest.class);
+        LogoutRequest req = new LogoutRequest(header);
         UserService service = new UserService(userDataAccess, authDataAccess);
         Object response = service.logout(req);
         if(response instanceof ErrorResponse){

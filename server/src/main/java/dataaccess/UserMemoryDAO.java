@@ -38,9 +38,7 @@ public class UserMemoryDAO implements UserDAO {
     }
 
     public void deleteDB(){
-            for (UserData user : userDataVector) {
-                deleteUser(user);
-            }
+            userDataVector = new Vector<>();
     }
 
     public boolean isAvailable(String attr){
