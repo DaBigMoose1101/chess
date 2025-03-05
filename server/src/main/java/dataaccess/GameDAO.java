@@ -15,4 +15,5 @@ public interface GameDAO {
     public void deleteGame(GameData game);
     public void joinGame(int gameID, ChessGame.TeamColor color, String username) throws DataAccessException;
     public int getGameListSize();
+    public void deleteDB();
 }

@@ -40,4 +40,9 @@ public class UserMemoryDAO implements UserDAO {
         userDataVector.remove(user);
     }
 
+    public void deleteDB(){
+        for(UserData user : userDataVector){
+            deleteUser(user);
+        }
+    }
 }

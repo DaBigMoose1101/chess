@@ -7,4 +7,5 @@ public interface UserDAO {
     public UserData getUser(String username);
     public void updateUser(UserData user) throws DataAccessException;
     public void deleteUser(UserData user);
+    public void deleteDB();
 }

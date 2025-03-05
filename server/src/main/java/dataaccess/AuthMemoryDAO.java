@@ -38,4 +38,10 @@ public class AuthMemoryDAO implements AuthDAO {
     public void deleteAuthToken(AuthData token){
         authDataVector.remove(token);
     }
+
+    public void deleteDB(){
+        for(AuthData token : authDataVector){
+            deleteAuthToken(token);
+        }
+    }
 }

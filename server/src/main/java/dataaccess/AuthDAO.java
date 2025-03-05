@@ -7,4 +7,5 @@ public interface AuthDAO {
     public AuthData getAuthToken(String token);
     public void updateAuthToken(AuthData token);
     public void deleteAuthToken(AuthData token);
+    public void deleteDB();
 }

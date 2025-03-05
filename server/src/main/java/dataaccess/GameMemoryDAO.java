@@ -109,6 +109,12 @@ public class GameMemoryDAO implements GameDAO{
         }
     }
 
+    public void deleteDB(){
+        for(GameData game: gameList){
+            gameList.remove(game);
+        }
+    }
+
     private boolean hasSpace(GameData game){
         return game.whiteUsername().isEmpty() || game.blackUsername().isEmpty();
     }

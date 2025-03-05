@@ -25,7 +25,7 @@ public class DatabaseAdminHandler {
     public Response deleteDB(){
         Gson serializer = new Gson();
         ClearDatabaseService service = new ClearDatabaseService(authDataAccess, userDataAccess, gameDataAccess);
-
+        return getResponse(service.deleteDB(), serializer);
     }
 
     private Response getResponse(Object response, Gson serializer){
