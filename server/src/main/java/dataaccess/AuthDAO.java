@@ -8,4 +8,5 @@ public interface AuthDAO {
     public void updateAuthToken(AuthData token);
     public void deleteAuthToken(AuthData token);
     public void deleteDB();
+    public int getDataBaseSize();
 }

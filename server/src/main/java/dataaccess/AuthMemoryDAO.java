@@ -43,4 +43,8 @@ public class AuthMemoryDAO implements AuthDAO {
     public void deleteDB(){
         authDataVector = new Vector<>();
     }
+
+    public int getDataBaseSize(){
+        return authDataVector.size();
+    }
 }

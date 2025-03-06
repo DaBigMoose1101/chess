@@ -24,15 +24,4 @@ public class ClearDatabaseService {
         gameDataAccess.deleteDB();
         return new ClearResponse(null);
     }
-
-    private ErrorResponse handleError(DataAccessException e){
-        String message = e.getMessage();
-
-        return switch (message) {
-            case "Error: Bad request" -> new ErrorResponse(400, message);
-            case "Error: Unauthorized" -> new ErrorResponse(401, message);
-            case "Error: Already Taken" -> new ErrorResponse(403, message);
-            default -> new ErrorResponse(500, message);
-        };
-    }
 }

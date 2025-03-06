@@ -1,4 +1,4 @@
 package records;
 
-public record ClearRequest(String delete) {
+public record ClearRequest() {
 }

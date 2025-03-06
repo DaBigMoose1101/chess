@@ -49,4 +49,8 @@ public class UserMemoryDAO implements UserDAO {
         }
         return true;
     }
+
+    public int getDataBaseSize(){
+        return userDataVector.size();
+    }
 }

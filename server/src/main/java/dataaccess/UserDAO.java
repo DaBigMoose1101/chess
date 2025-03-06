@@ -9,4 +9,5 @@ public interface UserDAO {
     public void deleteUser(UserData user);
     public boolean isAvailable(String attr);
     public void deleteDB();
+    public int getDataBaseSize();
 }
