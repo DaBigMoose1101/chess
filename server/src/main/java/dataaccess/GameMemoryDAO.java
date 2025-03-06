@@ -38,22 +38,6 @@ public class GameMemoryDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(GameData game, ChessGame updatedGame){
-        GameData temp = new GameData(game.gameID(), game.whiteUsername(),
-                game.blackUsername(), game.gameName(), updatedGame);
-        deleteGame(game);
-        createGame(temp);
-    }
-
-    @Override
-    public void updateGameName(GameData game, String newName){
-        GameData temp = new GameData(game.gameID(), game.whiteUsername(),
-                game.blackUsername(), newName, game.game());
-        deleteGame(game);
-        createGame(temp);
-    }
-
-    @Override
     public void updateGameColor(GameData game, String username,
                                 ChessGame.TeamColor color) throws DataAccessException{
         switch(color){

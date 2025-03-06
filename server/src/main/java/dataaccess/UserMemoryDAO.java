@@ -27,12 +27,6 @@ public class UserMemoryDAO implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserData user){
-        deleteUser(user);
-        addUser(user);
-    }
-
-    @Override
     public void deleteUser(UserData user){
         userDataVector.remove(user);
     }

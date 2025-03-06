@@ -7,8 +7,8 @@ public class KnightMoveCalc implements PieceMoveCalc{
     private ChessBoard board;
     private ChessPosition position;
     private Collection<ChessMove> moves = new ArrayList<>();
-    public KnightMoveCalc(ChessBoard Board, ChessPosition pos){
-        this.board = Board;
+    public KnightMoveCalc(ChessBoard board, ChessPosition pos){
+        this.board = board;
         this.position = pos;
         this.moves = new ArrayList<>();
     }

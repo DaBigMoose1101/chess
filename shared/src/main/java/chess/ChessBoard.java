@@ -89,14 +89,15 @@ public class ChessBoard implements Cloneable {
         }
         //pawns rest
         for(int i = 0; i < 8; i++){
-            ChessPiece p = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-            ChessPiece P = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            ChessPiece pb = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            ChessPiece pw = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             ChessPosition pos1 = new ChessPosition(7, i+1);
             ChessPosition pos2 = new ChessPosition(2, i+1);
-            addPiece(pos1, p);
-            addPiece(pos2, P);
+            addPiece(pos1, pb);
+            addPiece(pos2, pw);
         }
     }
+
     private void clearBoard(){
         for (var i = 0; i < this.chessBoard.length; i++){
             for (var j = 0; j < this.chessBoard[0].length; j++){

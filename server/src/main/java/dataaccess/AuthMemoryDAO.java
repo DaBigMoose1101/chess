@@ -27,15 +27,6 @@ public class AuthMemoryDAO implements AuthDAO {
     }
 
     @Override
-    public void updateAuthToken(AuthData token){
-        if(getAuthToken(token.authToken()) != null){
-            deleteAuthToken(token);
-            addAuthToken(token);
-        }
-
-    }
-
-    @Override
     public void deleteAuthToken(AuthData token){
         authDataVector.remove(token);
     }
