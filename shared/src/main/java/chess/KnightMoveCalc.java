@@ -48,7 +48,9 @@ public class KnightMoveCalc implements PieceMoveCalc{
     }
 
     private boolean checkPosition(ChessPosition pos){
-        if(board.getPiece(pos) == null || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
+        if(board.getPiece(pos) == null
+                || board.getPiece(pos) != null && board.getPiece(pos).getTeamColor()
+                != board.getPiece(position).getTeamColor()){
             return true;
         }
         return false;
