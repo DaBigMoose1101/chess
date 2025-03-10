@@ -18,16 +18,7 @@ public class ChessDatabase {
                     PRIMARY KEY (auth_id)
                     )""";
             executeStatement(conn.prepareStatement(authTableStatement));
-            var gameTableStatement = """
-                    CREATE TABLE IF NOT EXISTS game(
-                    game_id INT NOT NULL AUTO_INCREMENT
-                    white_user VARCHAR(255) NOT NULL UNIQUE,
-                    black_user VARCHAR(255) NOT NULL UNIQUE,
-                    game_name VARCHAR(255) NOT NULL UNIQUE,
-                    game TEXT NOT NULL,
-                    PRIMARY KEY (game_id)
-                    )""";
-            executeStatement(conn.prepareStatement(gameTableStatement));
+
         }
     }
 

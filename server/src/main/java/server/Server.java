@@ -18,12 +18,13 @@ public class Server {
     public Server(){
         try {
             ChessDatabase database = new ChessDatabase();
+            this.userDataAccess = new UserMemoryDAO();
+            this.authDataAccess = new AuthMemoryDAO();
+            this.gameDataAccess = new GameMemoryDAO();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.userDataAccess = new UserMemoryDAO();
-        this.authDataAccess = new AuthMemoryDAO();
-        this.gameDataAccess = new GameMemoryDAO();
+
 
     }
     public int run(int desiredPort) {

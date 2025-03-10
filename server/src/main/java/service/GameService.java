@@ -1,5 +1,6 @@
 package service;
 
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -24,13 +25,10 @@ public class GameService {
     public Object createGame(CreateGameRequest req, String authToken){
         try {
             validateUser(authToken);
-            int gameID = generateGameID();
-            String whiteUsername = null;
-            String blackUsername = null;
             String gameName = req.gameName();
             ChessGame game = new ChessGame();
-            GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
-            gameDataAccess.createGame(gameData);
+            GameData gameData = new GameData(0, null, null, gameName, game);
+            int gameID = gameDataAccess.createGame(gameData);
             return new CreateGameResponse(gameID);
         }
         catch(DataAccessException e){

@@ -101,7 +101,7 @@ public class UserDatabaseDAO implements UserDAO {
         try (var conn = DatabaseManager.getConnection()){
             conn.setCatalog("chess");
             try(PreparedStatement statement
-                        = conn.prepareStatement("SELECT username, password, email FROM users username = ?")){
+                        = conn.prepareStatement("SELECT username, password, email FROM users WHERE username = ?")){
                 statement.setString(1, username);
                 try(var queryResult = statement.executeQuery()){
                     if(queryResult.next()){
@@ -123,7 +123,7 @@ public class UserDatabaseDAO implements UserDAO {
         try (var conn = DatabaseManager.getConnection()) {
             conn.setCatalog("chess");
             try (PreparedStatement statement
-                         = conn.prepareStatement("SELECT username, password, email FROM users username = ?")) {
+                         = conn.prepareStatement("SELECT username, password, email FROM users WHERE username = ?")) {
                 statement.setString(1, username);
                 try (var queryResult = statement.executeQuery()) {
                     if (queryResult.next()) {

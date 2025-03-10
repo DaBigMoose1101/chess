@@ -6,12 +6,12 @@ import model.GameData;
 
 public interface GameDAO {
 
-    public void createGame(GameData gameData);
-    public GameData getGame(int gameID);
-    public ArrayList<GameData> listGames();
+    public int createGame(GameData gameData) throws DataAccessException;
+    public GameData getGame(int gameID) throws DataAccessException;
+    public ArrayList<GameData> listGames() throws DataAccessException;
     public void updateGameColor(GameData game, String userName, ChessGame.TeamColor color) throws DataAccessException;
-    public void deleteGame(GameData game);
+    public void deleteGame(GameData game) throws DataAccessException;
     public void joinGame(int gameID, ChessGame.TeamColor color, String username) throws DataAccessException;
-    public int getGameListSize();
-    public void deleteDB();
+    public int getGameListSize() throws DataAccessException;
+    public void deleteDB() throws DataAccessException;
 }
