@@ -6,14 +6,21 @@ import dataaccess.*;
 import handler.DatabaseAdminHandler;
 import handler.GameHandler;
 import handler.UserHandler;
+import dataaccess.DatabaseManager;
 import spark.*;
+
+import java.sql.SQLException;
 
 public class Server {
     final private UserDAO userDataAccess;
     final private AuthDAO authDataAccess;
     final private GameDAO gameDataAccess;
-
     public Server(){
+        try {
+            ChessDatabase database = new ChessDatabase();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         this.userDataAccess = new UserMemoryDAO();
         this.authDataAccess = new AuthMemoryDAO();
         this.gameDataAccess = new GameMemoryDAO();
