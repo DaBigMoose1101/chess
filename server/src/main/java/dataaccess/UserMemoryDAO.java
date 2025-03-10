@@ -26,6 +26,26 @@ public class UserMemoryDAO implements UserDAO {
        return null;
     }
 
+    @Override
+    public int getUserID(String userName) throws DataAccessException {
+        return 0;
+    }
+
+    @Override
+    public void updateUsername(String newUsername, int userID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void updatePassword(String newPassword, int userID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void updateEmail(String newEmail, int userID) throws DataAccessException {
+
+    }
+
     public void deleteDB(){
             userDataVector = new Vector<>();
     }

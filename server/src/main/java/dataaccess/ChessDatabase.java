@@ -10,15 +10,6 @@ public class ChessDatabase {
         try (var conn = DatabaseManager.getConnection()) {
             DatabaseManager.createDatabase();
             conn.setCatalog("chess");
-            var userTableStatement = """
-                    CREATE TABLE IF NOT EXISTS user(
-                    user_id INT NOT NULL AUTO_INCREMENT
-                    username VARCHAR(255) NOT NULL UNIQUE,
-                    password_hash VARCHAR(500) NOT NULL UNIQUE,
-                    email VARCHAR(100) NOT NULL UNIQUE,
-                    PRIMARY KEY (user_id)
-                    )""";
-            executeStatement(conn.prepareStatement(userTableStatement));
             var authTableStatement = """
                     CREATE TABLE IF NOT EXISTS auth(
                     auth_id INT NOT NULL AUTO_INCREMENT

@@ -1,5 +1,10 @@
 package service;
-import java.util.SplittableRandom;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Set;
 import java.util.UUID;
 
 import dataaccess.AuthDAO;
@@ -20,7 +25,7 @@ public class UserService {
 
     public Object registerUser(RegisterRequest req){
         String username = req.username();
-        String password = req.password();
+        String password = hashPassword(req.password());
         String email = req.email();
         UserData user = new UserData(username, password, email);
         try {
@@ -40,9 +45,10 @@ public class UserService {
 
     public Object login(LoginRequest req){
         String username = req.username();
-        String password = req.password();
-        UserData user = userDataAccess.getUser(username);
+        String password = hashPassword(req.password());
+
         try {
+            UserData user = userDataAccess.getUser(username);
             validateUsername(username);
             validateUser(user, password);
             String authToken = generateToken();
@@ -68,7 +74,11 @@ public class UserService {
         }
     }
 
-    public static String generateToken() {
+    private String hashPassword(String plainTextPassword) {
+        return  BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+    }
+
+    private static String generateToken() {
         return UUID.randomUUID().toString();
     }
 
