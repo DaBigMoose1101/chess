@@ -81,11 +81,6 @@ public class GameService {
         return data;
     }
 
-    private int generateGameID() throws DataAccessException {
-        int numOfGames = gameDataAccess.getGameListSize();
-        return numOfGames + 1;
-    }
-
     private ErrorResponse handleError(DataAccessException e){
         String message = e.getMessage();
 
