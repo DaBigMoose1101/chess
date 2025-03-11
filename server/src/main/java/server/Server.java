@@ -17,15 +17,22 @@ public class Server {
     final private GameDAO gameDataAccess;
     public Server(){
         try {
-            ChessDatabase database = new ChessDatabase();
             this.userDataAccess = new UserMemoryDAO();
             this.authDataAccess = new AuthMemoryDAO();
             this.gameDataAccess = new GameMemoryDAO();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
+    }
+    public Server(String Database){
+        try {
+            ChessDatabase database = new ChessDatabase();
+            this.userDataAccess = new UserDatabaseDAO();
+            this.authDataAccess = new AuthDatabaseDAO();
+            this.gameDataAccess = new GameDatabaseDAO();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
