@@ -3,9 +3,9 @@ package dataaccess;
 import model.AuthData;
 
 public interface AuthDAO {
-    public void addAuthToken(AuthData token);
-    public AuthData getAuthToken(String token);
-    public void deleteAuthToken(AuthData token);
-    public void deleteDB();
-    public int getDataBaseSize();
+    public void addAuthToken(AuthData token) throws DataAccessException;
+    public AuthData getAuthToken(String token) throws DataAccessException;
+    public void deleteAuthToken(AuthData token) throws DataAccessException;
+    public void deleteDB() throws DataAccessException;
+    public int getDataBaseSize() throws DataAccessException;
 }
