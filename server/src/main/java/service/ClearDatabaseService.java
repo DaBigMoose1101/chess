@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import records.ClearResponse;
 import records.ErrorResponse;
 
@@ -19,9 +16,14 @@ public class ClearDatabaseService {
     }
 
     public Object deleteDB(){
+        try{
         authDataAccess.deleteDB();
         userDataAccess.deleteDB();
         gameDataAccess.deleteDB();
         return new ClearResponse(null);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }

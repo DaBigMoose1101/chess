@@ -114,7 +114,7 @@ public class UserService {
         }
     }
 
-    private String validateToken(String token){
+    private String validateToken(String token) throws DataAccessException {
         if(authDataAccess.getAuthToken(token) == null){
             return token;
         }

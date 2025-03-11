@@ -13,7 +13,7 @@ public class AuthDatabaseDAO implements AuthDAO{
             conn.setCatalog("chess");
             var authTableStatement = """
                         CREATE TABLE IF NOT EXISTS authtokens(
-                        auth_id INT NOT NULL AUTO_INCREMENT
+                        auth_id INT NOT NULL AUTO_INCREMENT,
                         token VARCHAR(500) NOT NULL UNIQUE,
                         user VARCHAR(255) NOT NULL UNIQUE,
                         PRIMARY KEY (auth_id)
