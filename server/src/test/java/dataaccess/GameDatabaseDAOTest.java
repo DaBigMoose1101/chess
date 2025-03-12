@@ -176,4 +176,18 @@ class GameDatabaseDAOTest {
         assertEquals(usernameB, actualB);
         assertEquals(usernameW, actualW);
     }
+
+    @Test
+    void joinGameWrongID() throws DataAccessException{
+        ChessGame chess = new ChessGame();
+        GameData game1 = new GameData(0, null, null, "game1", chess);
+        int gameID = gameDataAccess.createGame(game1);
+        String usernameB = "bob";
+        try{
+            gameDataAccess.joinGame(0, ChessGame.TeamColor.BLACK, usernameB);
+        } catch (DataAccessException e) {
+            assertEquals("Error: Bad request", e.getMessage());
+        }
+
+    }
 }
