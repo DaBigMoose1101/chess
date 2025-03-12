@@ -16,7 +16,7 @@ class ClearDatabaseServiceTest {
     private ClearDatabaseService service;
 
     @BeforeEach
-    void setUp(){
+    void setUp() throws DataAccessException {
         this.authDataAccess = new AuthMemoryDAO();
         this.userDataAccess = new UserMemoryDAO();
         this.gameDataAccess = new GameMemoryDAO();
@@ -33,7 +33,7 @@ class ClearDatabaseServiceTest {
 
 
     @Test
-    void deleteAllDBs() {
+    void deleteAllDBs() throws DataAccessException {
         service.deleteDB();
         assertEquals(0, authDataAccess.getDataBaseSize());
         assertEquals(0, userDataAccess.getDataBaseSize());

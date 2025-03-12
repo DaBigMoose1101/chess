@@ -8,12 +8,11 @@ import java.sql.*;
 public class UserDatabaseDAO implements UserDAO {
     public UserDatabaseDAO() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
-
             var userTableStatement = """
                     CREATE TABLE IF NOT EXISTS users(
                     user_id INT NOT NULL AUTO_INCREMENT,
                     username VARCHAR(255) NOT NULL UNIQUE,
-                    password VARCHAR(500) NOT NULL UNIQUE,
+                    password_hash VARCHAR(1000) NOT NULL,
                     email VARCHAR(100) NOT NULL,
                     PRIMARY KEY (user_id)
                     )""";
@@ -46,7 +45,7 @@ public class UserDatabaseDAO implements UserDAO {
     public void updatePassword(String newPassword, int userID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement =
-                         conn.prepareStatement("UPDATE users SET password = ? WHERE user_id = ?")) {
+                         conn.prepareStatement("UPDATE users SET password_hash = ? WHERE user_id = ?")) {
                 preparedStatement.setString(1, newPassword);
                 preparedStatement.setInt(2, userID);
                 preparedStatement.executeUpdate();
@@ -78,10 +77,9 @@ public class UserDatabaseDAO implements UserDAO {
     public void addUser(UserData user) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             if(user.username().matches("[a-zA-Z0-9]+")
-                    && user.password().matches("[a-zA-Z0-9]+")
-                    && user.email().matches("[a-zA-Z0-9]+@[a-zA-Z0-9]+")) {
+                    && user.email().matches("[a-zA-Z0-9]+")) {
                 try(PreparedStatement statement = conn.prepareStatement(
-                        "INSERT INTO users(username, password, email) VALUES(?, ?, ?)")) {
+                        "INSERT INTO users(username, password_hash, email) VALUES(?, ?, ?)")) {
                     statement.setString(1, user.username());
                     statement.setString(2, user.password());
                     statement.setString(3, user.email());
@@ -99,11 +97,11 @@ public class UserDatabaseDAO implements UserDAO {
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             try(PreparedStatement statement
-                        = conn.prepareStatement("SELECT username, password, email FROM users WHERE username = ?")){
+                        = conn.prepareStatement("SELECT username, password_hash, email FROM users WHERE username = ?")){
                 statement.setString(1, username);
                 try(var queryResult = statement.executeQuery()){
                     if(queryResult.next()){
-                        var password = queryResult.getString("password");
+                        var password = queryResult.getString("password_hash");
                         var email = queryResult.getString("email");
                         return new UserData(username, password, email);
                     }
@@ -120,7 +118,7 @@ public class UserDatabaseDAO implements UserDAO {
     public int getUserID(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (PreparedStatement statement
-                         = conn.prepareStatement("SELECT username, password, email FROM users WHERE username = ?")) {
+                         = conn.prepareStatement("SELECT username, password_hash, email FROM users WHERE username = ?")) {
                 statement.setString(1, username);
                 try (var queryResult = statement.executeQuery()) {
                     if (queryResult.next()) {
@@ -151,11 +149,11 @@ public class UserDatabaseDAO implements UserDAO {
     public boolean isAvailable(String attr) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try(PreparedStatement statement
-                        = conn.prepareStatement("SELECT username, password, email FROM users")) {
+                        = conn.prepareStatement("SELECT username, password_hash, email FROM users")) {
                 var qRes = statement.executeQuery();
                 while (qRes.next()) {
                     if (qRes.getString("username").equals(attr)
-                            || qRes.getString("password").equals(attr)
+                            || qRes.getString("password_hash").equals(attr)
                             || qRes.getString("email").equals(attr)) {
                         return false;
                     }
@@ -174,7 +172,7 @@ public class UserDatabaseDAO implements UserDAO {
         int res = 0;
         try (var conn = DatabaseManager.getConnection()) {
             try(PreparedStatement statement
-                        = conn.prepareStatement("SELECT username, password, email FROM users")) {
+                        = conn.prepareStatement("SELECT username, password_hash, email FROM users")) {
                 var qRes = statement.executeQuery();
                 while (qRes.next()) {
                     res++;

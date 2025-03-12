@@ -7,18 +7,18 @@ import model.GameData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class GameDatabaseDAO implements GameDAO{
     public GameDatabaseDAO() throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             var gameTableStatement = """
                     CREATE TABLE IF NOT EXISTS games(
                     game_id INT NOT NULL AUTO_INCREMENT,
                     white_user VARCHAR(255) UNIQUE,
                     black_user VARCHAR(255) UNIQUE,
-                    game_name VARCHAR(255) NOT NULL UNIQUE,
+                    game_name VARCHAR(255) NOT NULL,
                     game TEXT NOT NULL,
                     PRIMARY KEY (game_id)
                     )""";
@@ -34,16 +34,18 @@ public class GameDatabaseDAO implements GameDAO{
         String gameName = gameData.gameName();
         String game = new Gson().toJson(gameData.game());
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             try(var statement =
-                        conn.prepareStatement("INSERT INTO games (game_id, white_user," +
-                                " black_user, game_name, game) VALUES(?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
-                if(gameData.gameName().matches("[a-zA-Z]+")){
-                    statement.setString(4, gameName);
+                        conn.prepareStatement("INSERT INTO games (white_user," +
+                                " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
+                if(gameData.gameName() != null && gameData.gameName().matches("[a-zA-Z1-9]+")){
+                    statement.setString(3, gameName);
                 }
-                statement.setString(2, null);
-                statement.setString(3, null);
-                statement.setString(5, game);
+                else{
+                    throw new DataAccessException("Error: Bad request");
+                }
+                statement.setNull(1, Types.VARCHAR);
+                statement.setNull(2, Types.VARCHAR);
+                statement.setString(4, game);
                 statement.executeUpdate();
 
                 var res = statement.getGeneratedKeys();
@@ -60,10 +62,8 @@ public class GameDatabaseDAO implements GameDAO{
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             try(var statement =
-                        conn.prepareStatement("SELECT id, white_user, black_user, game_name, game" +
-                                " FROM games WHERE id = ?")){
+                        conn.prepareStatement("SELECT * FROM games WHERE game_id = ?")){
                 statement.setInt(1, gameID);
                 try(var rs = statement.executeQuery()){
                     if(rs.next()){
@@ -86,10 +86,8 @@ public class GameDatabaseDAO implements GameDAO{
     public ArrayList<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> games = new ArrayList<>();
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             try(var statement =
-                        conn.prepareStatement("SELECT id, white_user, black_user, game_name, game" +
-                                " FROM games")){
+                        conn.prepareStatement("SELECT *  FROM games")){
                 try(var rs = statement.executeQuery()){
                     while(rs.next()){
                         int id = rs.getInt("game_id");
@@ -109,16 +107,12 @@ public class GameDatabaseDAO implements GameDAO{
 
     @Override
     public int getGameListSize() throws DataAccessException {
-        int res = 0;
         try (var conn = DatabaseManager.getConnection()) {
-            conn.setCatalog("chess");
             try(PreparedStatement statement
-                        = conn.prepareStatement("id, white_user, black_user, game_name, game" +
-                    " FROM games")) {
-                var qRes = statement.executeQuery();
-                while (qRes.next()) {
-                    res++;
-                }
+                        = conn.prepareStatement("SELECT COUNT(*) FROM games")) {
+                var rs = statement.executeQuery();
+                rs.next();
+                return rs.getInt(1);
             }
 
         }
@@ -126,7 +120,6 @@ public class GameDatabaseDAO implements GameDAO{
             String message = e.getMessage();
             throw new DataAccessException(message);
         }
-        return res;
     }
 
 
@@ -134,7 +127,6 @@ public class GameDatabaseDAO implements GameDAO{
     public void updateGameColor(GameData game, String username, ChessGame.TeamColor color) throws DataAccessException{
 
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             switch(color){
                 case BLACK:
                     String updateStatementB = "UPDATE games SET black_user = ? WHERE game_id = ?";
@@ -143,6 +135,7 @@ public class GameDatabaseDAO implements GameDAO{
                             statement.setString(1, username);
                         }
                         statement.setInt(2, game.gameID());
+                        statement.executeUpdate();
                     }
                     break;
                 case WHITE:
@@ -152,6 +145,7 @@ public class GameDatabaseDAO implements GameDAO{
                             statement.setString(1, username);
                         }
                         statement.setInt(2, game.gameID());
+                        statement.executeUpdate();
                     }
                     break;
                 default:
@@ -164,11 +158,10 @@ public class GameDatabaseDAO implements GameDAO{
     }
 
     @Override
-    public void deleteGame(GameData game) throws DataAccessException {
+    public void deleteGame(int gameID) throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             try(var statement = conn.prepareStatement("DELETE FROM games WHERE game_id = ?")){
-                statement.setInt(1, game.gameID());
+                statement.setInt(1, gameID);
                 statement.executeUpdate();
             }
         } catch (DataAccessException | SQLException e) {
@@ -209,7 +202,6 @@ public class GameDatabaseDAO implements GameDAO{
 
     public void deleteDB() throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
-            conn.setCatalog("chess");
             try(var statement = conn.prepareStatement("TRUNCATE TABLE games")){
                 statement.executeUpdate();
             }

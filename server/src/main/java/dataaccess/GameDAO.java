@@ -10,7 +10,7 @@ public interface GameDAO {
     public GameData getGame(int gameID) throws DataAccessException;
     public ArrayList<GameData> listGames() throws DataAccessException;
     public void updateGameColor(GameData game, String userName, ChessGame.TeamColor color) throws DataAccessException;
-    public void deleteGame(GameData game) throws DataAccessException;
+    public void deleteGame(int gameID) throws DataAccessException;
     public void joinGame(int gameID, ChessGame.TeamColor color, String username) throws DataAccessException;
     public int getGameListSize() throws DataAccessException;
     public void deleteDB() throws DataAccessException;

@@ -2,10 +2,7 @@ package service;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.AuthMemoryDAO;
-import dataaccess.GameDAO;
-import dataaccess.GameMemoryDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +21,7 @@ class GameServiceTest {
     private AuthData token2;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DataAccessException {
         this.authDataAccess = new AuthMemoryDAO();
         this.gameDataAccess = new GameMemoryDAO();
         this.service = new GameService(authDataAccess, gameDataAccess);
@@ -36,7 +33,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame() {
+    void createGame() throws DataAccessException {
         CreateGameRequest req = new CreateGameRequest("game");
         CreateGameResponse res = (CreateGameResponse) service.createGame(req, token1.authToken());
         int gameID = res.gameID();
@@ -50,7 +47,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createMultipleGames(){
+    void createMultipleGames() throws DataAccessException {
         CreateGameRequest req1 = new CreateGameRequest("game1");
         CreateGameResponse res1 = (CreateGameResponse) service.createGame(req1, token1.authToken());
         int gameID1 = res1.gameID();
@@ -73,7 +70,7 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame() {
+    void joinGame() throws DataAccessException {
         CreateGameRequest createReq = new CreateGameRequest("game");
         CreateGameResponse createRes = (CreateGameResponse) service.createGame(createReq, token1.authToken());
         int gameID = createRes.gameID();
@@ -150,7 +147,7 @@ class GameServiceTest {
     }
 
     @Test
-    void addAndRemoveGameList(){
+    void addAndRemoveGameList() throws DataAccessException {
         Vector<Integer> gameIDs = new Vector<>();
         for(int i = 0; i < 6; i++){
             CreateGameRequest createReq = new CreateGameRequest("game");
@@ -164,12 +161,12 @@ class GameServiceTest {
             assertEquals(i + 1, gameListRes.games().size(), "Wrong number of games");
 
             GameData game = gameDataAccess.getGame(i+1);
-            gameDataAccess.deleteGame(game);
+            gameDataAccess.deleteGame(game.gameID());
         }
     }
 
     @Test
-    void fullGameGameList(){
+    void fullGameGameList() throws DataAccessException {
         var serializer = new Gson();
         Vector<GameData> games = new Vector<>();
         GameData game = new GameData(1, "Billy",
@@ -191,7 +188,7 @@ class GameServiceTest {
     void emptyGameGameList(){
         var serializer = new Gson();
         Vector<GameData> games = new Vector<>();
-        GameData game = new GameData(1, null,
+        GameData game = new GameData(0, null,
                 null, "game", null);
         games.add(game);
         GamesListResponse expectedResponse = new GamesListResponse(games);

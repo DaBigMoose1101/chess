@@ -45,13 +45,13 @@ public class GameMemoryDAO implements GameDAO{
             case BLACK:
                 GameData tempBlack = new GameData(game.gameID(), game.whiteUsername(),
                         username, game.gameName(), game.game());
-                deleteGame(game);
+                deleteGame(game.gameID());
                 createGame(tempBlack);
                 break;
             case WHITE:
                 GameData tempWhite = new GameData(game.gameID(), username,
                         game.whiteUsername(), game.gameName(), game.game());
-                deleteGame(game);
+                deleteGame(game.gameID());
                 createGame(tempWhite);
                 break;
             default:
@@ -60,7 +60,8 @@ public class GameMemoryDAO implements GameDAO{
     }
 
     @Override
-    public void deleteGame(GameData game){
+    public void deleteGame(int gameId){
+        GameData game = getGame(gameId);
         gameList.remove(game);
     }
 

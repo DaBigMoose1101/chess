@@ -45,7 +45,7 @@ public class UserService {
 
     public Object login(LoginRequest req){
         String username = req.username();
-        String password = hashPassword(req.password());
+        String password = req.password();
 
         try {
             UserData user = userDataAccess.getUser(username);
@@ -90,7 +90,7 @@ public class UserService {
     }
 
     private void validateUser(UserData user, String password) throws DataAccessException{
-        if(!password.equals(user.password())) {
+        if(!BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("Error: Unauthorized");
         }
     }
