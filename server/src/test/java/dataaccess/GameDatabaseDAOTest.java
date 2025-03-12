@@ -19,13 +19,9 @@ class GameDatabaseDAOTest {
     GameDAO gameDataAccess;
 
     @BeforeEach
-    void setUp() {
-        try(var conn = DatabaseManager.getConnection()){
-            gameDataAccess = new GameDatabaseDAO();
-            gameDataAccess.deleteDB();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void setUp() throws DataAccessException {
+        gameDataAccess = new GameDatabaseDAO();
+        gameDataAccess.deleteDB();
     }
 
     @Test

@@ -118,11 +118,11 @@ public class UserDatabaseDAO implements UserDAO {
     public int getUserID(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (PreparedStatement statement
-                         = conn.prepareStatement("SELECT username, password_hash, email FROM users WHERE username = ?")) {
+                         = conn.prepareStatement("SELECT user_id, username," +
+                    " password_hash, email FROM users WHERE username = ?")) {
                 statement.setString(1, username);
                 try (var queryResult = statement.executeQuery()) {
                     if (queryResult.next()) {
-
                         return queryResult.getInt("user_id");
                     }
                 }
@@ -132,7 +132,7 @@ public class UserDatabaseDAO implements UserDAO {
             String message = e.getMessage();
             throw new DataAccessException(message);
         }
-        return 0;
+        throw new DataAccessException("Error: Bad request");
     }
     public void deleteDB() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
@@ -172,10 +172,10 @@ public class UserDatabaseDAO implements UserDAO {
         int res = 0;
         try (var conn = DatabaseManager.getConnection()) {
             try(PreparedStatement statement
-                        = conn.prepareStatement("SELECT username, password_hash, email FROM users")) {
-                var qRes = statement.executeQuery();
-                while (qRes.next()) {
-                    res++;
+                        = conn.prepareStatement("SELECT COUNT(*) FROM users")) {
+                var rs = statement.executeQuery();
+                if(rs.next()){
+                    return rs.getInt(1);
                 }
             }
 
