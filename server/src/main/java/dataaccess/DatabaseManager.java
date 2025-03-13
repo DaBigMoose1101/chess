@@ -70,16 +70,4 @@ public class DatabaseManager {
         }
     }
 
-    static public void deleteDatabase(){
-        try{
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-            conn.setCatalog(DATABASE_NAME);
-            var statement = conn.prepareStatement("DROP DATABASE chess");
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 }
