@@ -26,17 +26,25 @@ public class PawnMoveCalc implements PieceMoveCalc{
         if(color == ChessGame.TeamColor.WHITE){
             row1 = position.getRow() + 1;
             row2 = position.getRow() + 2;
-            calcMovesWhite(row1, row2);
+            calcMoves(row1, row2);
         }
         else{
             row1 = position.getRow() - 1;
             row2 = position.getRow() - 2;
-            calcMovesBlack(row1, row2);
+            calcMoves(row1, row2);
         }
 
 
         return moves;
     }
+    private boolean isFirstMove(){
+        int row = position.getRow();
+        return switch (color) {
+            case WHITE -> 2 == row;
+            case BLACK -> 7 == row;
+        };
+    }
+
     private boolean checkPosition(ChessPosition pos){
         if(board.getPiece(pos) == null){
             return true;
@@ -84,42 +92,15 @@ public class PawnMoveCalc implements PieceMoveCalc{
             moves.add(move);
         }
     }
-    private void calcMovesWhite(int row1, int row2) {
+    private void calcMoves(int row1, int row2) {
         //first move option
-        if (position.getRow() == 2) {
+        if (isFirstMove()) {
             ChessPosition pos1 = new ChessPosition(row1, position.getColumn());
             ChessPosition pos2 = new ChessPosition(row2, position.getColumn());
             if (checkPosition(pos1) && checkPosition(pos2)) {
                 ChessMove move = new ChessMove(position, pos2, null);
                 moves.add(move);
             }
-        }
-        //regular moves
-        for(int i = position.getColumn()-1; i <= position.getColumn() + 1; i++){
-            if(isValidMove(row1, i)){
-                ChessPosition pos = new ChessPosition(row1, i);
-                //attack moves
-                if((i == position.getColumn()-1 || i == position.getColumn()+1) && canAttack(pos)){
-                    attack(pos, row1);
-                }
-                //forward move
-                else if(checkPosition(pos) && i == position.getColumn()){
-                    moveForward(pos, row1);
-                }
-            }
-        }
-
-    }
-    private void calcMovesBlack(int row1, int row2) {
-        //first move option
-        if (position.getRow() == 7) {
-            ChessPosition pos1 = new ChessPosition(row1, position.getColumn());
-            ChessPosition pos2 = new ChessPosition(row2, position.getColumn());
-            if (checkPosition(pos1) && checkPosition(pos2)) {
-                ChessMove move = new ChessMove(position, pos2, null);
-                moves.add(move);
-            }
-
         }
         //regular moves
         for(int i = position.getColumn()-1; i <= position.getColumn() + 1; i++){

@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameDatabaseDAOTest {
     GameDAO gameDataAccess;
+    ChessGame chess;
 
     @AfterEach
     void clear() throws DataAccessException{
@@ -28,11 +29,11 @@ class GameDatabaseDAOTest {
     void setUp() throws DataAccessException {
         gameDataAccess = new GameDatabaseDAO();
         gameDataAccess.deleteDB();
+        chess = new ChessGame();
     }
 
     @Test
     void createGame() throws DataAccessException {
-        ChessGame chess = new ChessGame();
         GameData game = new GameData(0, null, null, "game", chess);
         int actual = gameDataAccess.createGame(game);
 
@@ -52,7 +53,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void createGameBadRequest() {
-        ChessGame chess = new ChessGame();
         GameData gameData = new GameData(0, null, null, null, chess);
         try{
             gameDataAccess.createGame(gameData);
@@ -65,7 +65,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void getGame() {
-        ChessGame chess = new ChessGame();
         try(var conn = DatabaseManager.getConnection()){
             try(var statement = conn.prepareStatement("INSERT INTO games (white_user," +
                     " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
@@ -87,7 +86,7 @@ class GameDatabaseDAOTest {
 
     @Test
     void getGameBadRequest(){
-        ChessGame chess = new ChessGame();
+
         try(var conn = DatabaseManager.getConnection()){
             try(var statement = conn.prepareStatement("INSERT INTO games (white_user," +
                     " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
@@ -106,7 +105,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void listGames() throws DataAccessException {
-        ChessGame chess = new ChessGame();
         GameData game1 = new GameData(0, null, null, "game1", chess);
         GameData game2 = new GameData(0, null, null, "game2", chess);
         GameData game3 = new GameData(0, null, null, "game3", chess);
@@ -130,7 +128,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void getGameListSize() throws DataAccessException {
-        ChessGame chess = new ChessGame();
         GameData game1 = new GameData(0, null, null, "game1", chess);
         GameData game2 = new GameData(0, null, null, "game2", chess);
         GameData game3 = new GameData(0, null, null, "game3", chess);
@@ -145,7 +142,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void deleteGame()throws DataAccessException {
-        ChessGame chess = new ChessGame();
         GameData game1 = new GameData(0, null, null, "game1", chess);
         GameData game2 = new GameData(0, null, null, "game2", chess);
         GameData game3 = new GameData(0, null, null, "game3", chess);
@@ -166,7 +162,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void joinGame() throws DataAccessException{
-        ChessGame chess = new ChessGame();
         GameData game1 = new GameData(0, null, null, "game1", chess);
         int gameID = gameDataAccess.createGame(game1);
         String usernameB = "bob";
@@ -181,7 +176,6 @@ class GameDatabaseDAOTest {
 
     @Test
     void joinGameWrongID() throws DataAccessException{
-        ChessGame chess = new ChessGame();
         GameData game1 = new GameData(0, null, null, "game1", chess);
         int gameID = gameDataAccess.createGame(game1);
         String usernameB = "bob";

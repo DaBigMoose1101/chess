@@ -163,4 +163,8 @@ public class FastMovers {
             }
         }
     }
+
+    protected void getMove(){
+
+    }
 }
