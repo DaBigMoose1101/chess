@@ -91,19 +91,18 @@ public class AuthDatabaseDAO implements AuthDAO{
     }
 
     public int getDataBaseSize() throws DataAccessException {
-        int res = 0;
         try(var conn = DatabaseManager.getConnection()){
-            String getTokens = "SELECT token, user FROM authtokens";
+            String getTokens = "SELECT COUNT(*) FROM authtokens";
             try(var statement = conn.prepareStatement(getTokens)){
                 var queryRes = statement.executeQuery();
-                while(queryRes.next()){
-                    res++;
+                if(queryRes.next()){
+                    return queryRes.getInt(1);
                 }
             }
         }
         catch(DataAccessException | SQLException e){
             throw new DataAccessException(e.getMessage());
         }
-        return res;
+        return 0;
     }
 }
