@@ -25,7 +25,7 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
-    public Server(String Database){
+    public Server(String database){
         try {
             this.userDataAccess = new UserMemoryDAO();
             this.authDataAccess = new AuthMemoryDAO();
