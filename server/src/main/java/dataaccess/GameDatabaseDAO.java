@@ -16,8 +16,8 @@ public class GameDatabaseDAO implements GameDAO{
             var gameTableStatement = """
                     CREATE TABLE IF NOT EXISTS games(
                     game_id INT NOT NULL AUTO_INCREMENT,
-                    white_user VARCHAR(255) UNIQUE,
-                    black_user VARCHAR(255) UNIQUE,
+                    white_user VARCHAR(255),
+                    black_user VARCHAR(255),
                     game_name VARCHAR(255) NOT NULL,
                     game TEXT NOT NULL,
                     PRIMARY KEY (game_id)
