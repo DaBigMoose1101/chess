@@ -37,7 +37,7 @@ public class GameDatabaseDAO implements GameDAO{
             try(var statement =
                         conn.prepareStatement("INSERT INTO games (white_user," +
                                 " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
-                if(gameData.gameName() != null && gameData.gameName().matches("[a-zA-Z1-9]+")){
+                if(gameData.gameName() != null){
                     statement.setString(3, gameName);
                 }
                 else{

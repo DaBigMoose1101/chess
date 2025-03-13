@@ -17,19 +17,19 @@ public class Server {
     final private GameDAO gameDataAccess;
     public Server(){
         try {
-            this.userDataAccess = new UserMemoryDAO();
-            this.authDataAccess = new AuthMemoryDAO();
-            this.gameDataAccess = new GameMemoryDAO();
+            ChessDatabase database = new ChessDatabase();
+            this.userDataAccess = new UserDatabaseDAO();
+            this.authDataAccess = new AuthDatabaseDAO();
+            this.gameDataAccess = new GameDatabaseDAO();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     public Server(String Database){
         try {
-            ChessDatabase database = new ChessDatabase();
-            this.userDataAccess = new UserDatabaseDAO();
-            this.authDataAccess = new AuthDatabaseDAO();
-            this.gameDataAccess = new GameDatabaseDAO();
+            this.userDataAccess = new UserMemoryDAO();
+            this.authDataAccess = new AuthMemoryDAO();
+            this.gameDataAccess = new GameMemoryDAO();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

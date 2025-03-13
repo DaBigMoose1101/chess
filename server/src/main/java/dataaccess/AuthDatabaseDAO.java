@@ -14,7 +14,7 @@ public class AuthDatabaseDAO implements AuthDAO{
                         CREATE TABLE IF NOT EXISTS authtokens(
                         auth_id INT NOT NULL AUTO_INCREMENT,
                         token VARCHAR(500) NOT NULL UNIQUE,
-                        user VARCHAR(255) NOT NULL UNIQUE,
+                        user VARCHAR(255) NOT NULL,
                         PRIMARY KEY (auth_id)
                         )""";
             try(var statement = conn.prepareStatement(authTableStatement)){

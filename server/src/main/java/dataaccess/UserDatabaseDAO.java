@@ -78,8 +78,7 @@ public class UserDatabaseDAO implements UserDAO {
     @Override
     public void addUser(UserData user) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
-            if(user.username().matches("[a-zA-Z0-9]+")
-                    && user.email().matches("[a-zA-Z0-9]+")) {
+            if(user.username().matches("[a-zA-Z0-9]+")) {
                 try(PreparedStatement statement = conn.prepareStatement(
                         "INSERT INTO users(username, password_hash, email) VALUES(?, ?, ?)")) {
                     statement.setString(1, user.username());
