@@ -2,6 +2,8 @@ package dataaccess;
 
 import dataaccess.DataAccessException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.*;
 
 
@@ -152,9 +154,12 @@ public class UserDatabaseDAO implements UserDAO {
                         = conn.prepareStatement("SELECT username, password_hash, email FROM users")) {
                 var qRes = statement.executeQuery();
                 while (qRes.next()) {
+
                     if (qRes.getString("username").equals(attr)
-                            || qRes.getString("password_hash").equals(attr)
                             || qRes.getString("email").equals(attr)) {
+                        return false;
+                    }
+                    if(BCrypt.checkpw(attr,qRes.getString("password_hash"))){
                         return false;
                     }
                 }

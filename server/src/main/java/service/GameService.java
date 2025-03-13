@@ -27,7 +27,7 @@ public class GameService {
             validateUser(authToken);
             String gameName = req.gameName();
             ChessGame game = new ChessGame();
-            GameData gameData = new GameData(0, null, null, gameName, game);
+            GameData gameData = new GameData(getGameId(), null, null, gameName, game);
             int gameID = gameDataAccess.createGame(gameData);
             return new CreateGameResponse(gameID);
         }
@@ -79,6 +79,11 @@ public class GameService {
             throw new DataAccessException("Error: Unauthorized");
         }
         return data;
+    }
+
+    private int getGameId() throws DataAccessException {
+        int iD = gameDataAccess.getGameListSize();
+        return iD + 1;
     }
 
     private ErrorResponse handleError(DataAccessException e){

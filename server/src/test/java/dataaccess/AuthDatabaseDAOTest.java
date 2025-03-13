@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthDatabaseDAOTest {
     AuthDAO authDataAccess;
-
+    @AfterEach
+    void clear() throws DataAccessException{
+        authDataAccess.deleteDB();
+    }
     @BeforeEach
     void setUp() throws DataAccessException {
         authDataAccess = new AuthDatabaseDAO();

@@ -1,7 +1,7 @@
 package dataaccess;
 import java.util.Vector;
 import model.UserData;
-
+import org.mindrot.jbcrypt.BCrypt;
 
 
 public class UserMemoryDAO implements UserDAO {
@@ -52,7 +52,7 @@ public class UserMemoryDAO implements UserDAO {
 
     public boolean isAvailable(String attr){
         for(UserData user : userDataVector){
-            if(user.password().equals(attr) || user.email().equals(attr) || user.username().equals(attr)){
+            if(BCrypt.checkpw(attr, user.password()) || user.email().equals(attr) || user.username().equals(attr)){
                 return false;
             }
         }

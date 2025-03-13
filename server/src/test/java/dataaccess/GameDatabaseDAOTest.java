@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import com.mysql.cj.xdevapi.Type;
 import model.GameData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameDatabaseDAOTest {
     GameDAO gameDataAccess;
+
+    @AfterEach
+    void clear() throws DataAccessException{
+        gameDataAccess.deleteDB();
+    }
 
     @BeforeEach
     void setUp() throws DataAccessException {

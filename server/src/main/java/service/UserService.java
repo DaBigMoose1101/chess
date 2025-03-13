@@ -25,12 +25,13 @@ public class UserService {
 
     public Object registerUser(RegisterRequest req){
         String username = req.username();
-        String password = hashPassword(req.password());
+        String password = req.password();
         String email = req.email();
-        UserData user = new UserData(username, password, email);
         try {
-            isAvailable(username, password, email);
             validatePassword(password);
+            isAvailable(username, password, email);
+            password = hashPassword(req.password());
+            UserData user = new UserData(username, password, email);
             userDataAccess.addUser(user);
             String authToken = generateToken();
             validateToken(authToken);

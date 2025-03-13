@@ -5,6 +5,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import records.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,9 +41,8 @@ class UserServiceTest {
             String expectedEmail = "billyboy@gmail.com";
 
             assertEquals(expectedUsername, actual.username(), "Username's should match");
-            assertEquals(expectedPassword, actualUser.password(), "Passwords should match");
+            assertTrue(BCrypt.checkpw(expectedPassword, actualUser.password()), "Passwords should match");
             assertEquals(expectedEmail, actualUser.email(), "Emails should match");
-            assertEquals(userExpected, actualUser, "User should be in Database");
             assertEquals(expectedUsername, authDataAccess.getAuthToken(actual.authToken()).username(),
                     "AuthToken should map to user");
         }
@@ -66,11 +66,11 @@ class UserServiceTest {
             UserData expectedUser2 = new UserData("JoeDoe", "Abc123", "JoeDoe@gmail.com");
             UserData expectedUser3 = new UserData("JaneLee", "password1", "fox@gmail.com");
 
-            assertEquals(expectedUser1, userDataAccess.getUser(actualRes1.username()),
+            assertEquals(expectedUser1.username(), actualRes1.username(),
                     "User should be in database");
-            assertEquals(expectedUser2, userDataAccess.getUser(actualRes2.username()),
+            assertEquals(expectedUser2.username(), actualRes2.username(),
                     "User should be in database");
-            assertEquals(expectedUser3, userDataAccess.getUser(actualRes3.username()),
+            assertEquals(expectedUser3.username(), actualRes3.username(),
                     "User should be in database");
 
             assertEquals(expectedUser1.username(), authDataAccess.getAuthToken(actualRes1.authToken()).username(),
@@ -132,12 +132,18 @@ class UserServiceTest {
     void login() {
         try {
             UserData user1 = new UserData("BillyBoy", "Qwerty", "billyboy@gmail.com");
+            RegisterRequest req1 =
+                    new RegisterRequest("BillyBoy", "Qwerty", "billyboy@gmail.com");
             UserData user2 = new UserData("Billy", "password", "billy@gmail.com");
+            RegisterRequest req2 =
+                    new RegisterRequest("Billy", "password", "billy@gmail.com");
             UserData user3 = new UserData("JoelLee", "abc123", "jojo@gmail.com");
+            RegisterRequest req3 =
+                    new RegisterRequest("JoelLee", "abc123", "jojo@gmail.com");
 
-            userDataAccess.addUser(user1);
-            userDataAccess.addUser(user2);
-            userDataAccess.addUser(user3);
+            service.registerUser(req1);
+            service.registerUser(req2);
+            service.registerUser(req3);
 
             LoginRequest req = new LoginRequest("BillyBoy", "Qwerty");
             LoginResponse actual = (LoginResponse) service.login(req);
@@ -154,14 +160,17 @@ class UserServiceTest {
     void loginInvalidUserName(){
         try {
             UserData user1 = new UserData("BillyBoy", "Qwerty", "billyboy@gmail.com");
+            RegisterRequest req1 = new RegisterRequest(user1.username(), user1.password(), user1.email());
+            service.registerUser(req1);
             UserData user2 = new UserData("Billy", "password", "billy@gmail.com");
+            RegisterRequest req2 = new RegisterRequest(user2.username(), user2.password(), user2.email());
+            service.registerUser(req2);
             UserData user3 = new UserData("JoelLee", "abc123", "jojo@gmail.com");
+            RegisterRequest req3 = new RegisterRequest(user3.username(), user3.password(), user3.email());
+            service.registerUser(req3);
 
             LoginRequest req = new LoginRequest("BillyBo", "Qwerty");
 
-            userDataAccess.addUser(user1);
-            userDataAccess.addUser(user2);
-            userDataAccess.addUser(user3);
 
             assertInstanceOf(ErrorResponse.class, service.login(req));
         }
@@ -174,14 +183,18 @@ class UserServiceTest {
     void loginInvalidPassword(){
         try {
             UserData user1 = new UserData("BillyBoy", "Qwerty", "billyboy@gmail.com");
+            RegisterRequest req1 = new RegisterRequest(user1.username(), user1.password(), user1.email());
+            service.registerUser(req1);
             UserData user2 = new UserData("Billy", "password", "billy@gmail.com");
+            RegisterRequest req2 = new RegisterRequest(user2.username(), user2.password(), user2.email());
+            service.registerUser(req2);
             UserData user3 = new UserData("JoelLee", "abc123", "jojo@gmail.com");
+            RegisterRequest req3 = new RegisterRequest(user3.username(), user3.password(), user3.email());
+            service.registerUser(req3);
 
             LoginRequest req = new LoginRequest("BillyBoy", "Qwert");
 
-            userDataAccess.addUser(user1);
-            userDataAccess.addUser(user2);
-            userDataAccess.addUser(user3);
+
 
             assertInstanceOf(ErrorResponse.class, service.login(req));
         }

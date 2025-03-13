@@ -188,7 +188,7 @@ class GameServiceTest {
     void emptyGameGameList(){
         var serializer = new Gson();
         Vector<GameData> games = new Vector<>();
-        GameData game = new GameData(0, null,
+        GameData game = new GameData(1, null,
                 null, "game", null);
         games.add(game);
         GamesListResponse expectedResponse = new GamesListResponse(games);
