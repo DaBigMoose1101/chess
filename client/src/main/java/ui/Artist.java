@@ -18,34 +18,44 @@ public class Artist {
     private ChessBoard board;
     private ChessGame.TeamColor playerColor;
 
+    public static void main(String[] args){
+        ChessBoard board = new ChessBoard();
+        ChessGame.TeamColor color = ChessGame.TeamColor.BLACK;
+        board.resetBoard();
+        Artist a = new Artist(board, color);
+        a.clear();
+        a.drawBoard();
+
+    }
+
     private void drawHeaderFooter(Vector<String> labels){
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_BOLD);
         out.print(SET_TEXT_COLOR_BLUE);
-        margin(" ");
+        margin("  ");
         for(String ch: labels){
             drawSquare(ch);
         }
-        margin(" ");
+        margin("  ");
+        out.print(RESET_BG_COLOR);
         out.println();
     }
 
     private void drawRow( Vector<Integer> printOrderNums, int index, String currentColor){
-        margin(printOrderNums.get(index).toString());
+        String label = printOrderNums.get(index-1).toString();
+        margin(" "+label);
         String ch;
-        margin(printOrderNums.elementAt(index).toString());
-        int i = 0;
+        setSquareLight();
+        if(currentColor.equals("dark")) setSquareDark();
         for(int num : printOrderNums){
             ChessPosition pos = new ChessPosition(index, num);
             ch = getIcon(board.getPiece(pos), " ");
             setIconColor(board.getPiece(pos));
             drawSquare(ch);
-            if(i != 7){
-                currentColor = changeSquareColor(currentColor);
-            }
-            i++;
+            currentColor = changeSquareColor(currentColor);
         }
-        margin(printOrderNums.get(index).toString());
+        margin(label + " ");
+        out.print(RESET_BG_COLOR);
         out.println();
     }
 
@@ -81,13 +91,21 @@ public class Artist {
         out.print(" ");
     }
 
+    private void setSquareLight(){
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+    }
+
+    private void setSquareDark(){
+        out.print(SET_BG_COLOR_DARK_GREY);
+    }
+
     private String changeSquareColor(String current){
         if(current.equals("light")){
-            out.print(SET_BG_COLOR_DARK_GREY);
+            setSquareDark();
             return "dark";
         }
         else{
-            out.print(SET_BG_COLOR_LIGHT_GREY);
+            setSquareLight();
             return "light";
         }
     }
