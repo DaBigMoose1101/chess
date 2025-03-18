@@ -42,13 +42,13 @@ public class Artist {
         out.println();
     }
 
-    private void drawRow( Vector<Integer> printOrderNums, int index, String currentColor){
+    private void drawRow( Vector<Integer> printOrderCol, int index, String currentColor){
         String label = String.valueOf(index);
         margin(" "+label);
         String ch;
         setSquareLight();
         if(currentColor.equals("dark")) setSquareDark();
-        for(int num : printOrderNums){
+        for(int num : printOrderCol){
             ChessPosition pos = new ChessPosition(index, num);
             ch = getIcon(board.getPiece(pos), " ");
             setIconColor(board.getPiece(pos));
@@ -118,20 +118,23 @@ public class Artist {
     }
 
     public void drawBoard(){
-        Vector<Integer> printOrderNums;
+        Vector<Integer> printOrderRow;
+        Vector<Integer> printOrderCol;
         Vector<String> printOrderChars;
         switch(playerColor){
             case BLACK:
-                printOrderNums = new Vector<Integer>(List.of(1,2,3,4,5,6,7,8));
+                printOrderRow = new Vector<Integer>(List.of(1,2,3,4,5,6,7,8));
+                printOrderCol = new Vector<Integer>(List.of(8,7,6,5,4,3,2,1));
                 printOrderChars = new Vector<String>(List.of("h","g","f","e","d","c","b","a"));
                 break;
             default:
-                printOrderNums = new Vector<Integer>(List.of(8,7,6,5,4,3,2,1));
+                printOrderRow = new Vector<Integer>(List.of(8,7,6,5,4,3,2,1));
+                printOrderCol = new Vector<Integer>(List.of(1,2,3,4,5,6,7,8));
                 printOrderChars = new Vector<String>(List.of("a","b","c","d","e","f","g","h"));
                 break;
         }
         drawHeaderFooter(printOrderChars);
-        for(int i = 0; i < printOrderNums.size(); i++){
+        for(int i = 0; i < printOrderRow.size(); i++){
             String currentColor;
             if(i % 2 == 0){
                 currentColor = "light";
@@ -139,7 +142,7 @@ public class Artist {
             else{
                 currentColor = "dark";
             }
-            drawRow(printOrderNums, printOrderNums.get(i), currentColor);
+            drawRow(printOrderCol, printOrderRow.get(i), currentColor);
         }
         drawHeaderFooter(printOrderChars);
 
