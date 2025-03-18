@@ -26,24 +26,84 @@ public class Artist {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_BOLD);
         out.print(SET_TEXT_COLOR_BLUE);
+        margin(" ");
+        for(String ch: labels){
+            drawSquare(ch);
+        }
+        margin(" ");
     }
 
-    private void drawRow(Vector<String> printOrderChars, Vector<Integer> printOrderNums, int index){
-        margin(printOrderChars.get(index));
-        for(int i = 1; i < 9; i++){
-            ChessPosition pos = new ChessPosition(index, printOrderNums.get(i));
-            ChessPiece piece = board.getPiece(pos);
-            drawSquare(piece);
+    private void drawRow( Vector<Integer> printOrderNums, int index, String currentColor){
+        margin(printOrderNums.get(index).toString());
+        String ch;
+        margin(printOrderNums.elementAt(index).toString());
+        int i = 0;
+        for(int num : printOrderNums){
+            ChessPosition pos = new ChessPosition(index, num);
+            ch = getIcon(board.getPiece(pos), " ");
+            setIconColor(board.getPiece(pos));
+            drawSquare(ch);
+            if(i != 7){
+                currentColor = changeSquareColor(currentColor);
+            }
+            i++;
         }
-        margin(printOrderChars.get(index));
+        margin(printOrderNums.get(index).toString());
+    }
+
+    private String getIcon(ChessPiece piece, String ch){
+        String res = ch;
+        switch (piece.getPieceType()){
+            case ChessPiece.PieceType.KING:
+                res = "K";
+                break;
+            case ChessPiece.PieceType.QUEEN:
+                res = "Q";
+                break;
+            case ChessPiece.PieceType.BISHOP:
+                res = "B";
+                break;
+            case ChessPiece.PieceType.KNIGHT:
+                res = "N";
+                break;
+            case ChessPiece.PieceType.ROOK:
+                res = "R";
+                break;
+            case ChessPiece.PieceType.PAWN:
+                res = "P";
+                break;
+        }
+        return res;
+    }
+
+    private void setIconColor(ChessPiece piece){
+        out.print(SET_TEXT_COLOR_BLACK);
+        if(piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+            out.print(SET_TEXT_COLOR_WHITE);
+        }
     }
 
     private void margin(String ch){
-
+        out.print(SET_BG_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_BLUE);
+        out.print(ch);
     }
 
-    private void drawSquare(ChessPiece piece){
+    private void drawSquare(String ch){
+        out.print(" ");
+        out.print(ch);
+        out.print(" ");
+    }
 
+    private String changeSquareColor(String current){
+        if(current.equals("light")){
+            out.print(SET_BG_COLOR_DARK_GREY);
+            return "dark";
+        }
+        else{
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            return "light";
+        }
     }
 
     public Artist(chess.ChessBoard board, ChessGame.TeamColor playerColor){
@@ -58,10 +118,24 @@ public class Artist {
             case BLACK:
                 printOrderNums = new Vector<Integer>(List.of(1,2,3,4,5,6,7,8));
                 printOrderChars = new Vector<String>(List.of("h","g","f","e","d","c","b","a"));
+                break;
             default:
                 printOrderNums = new Vector<Integer>(List.of(8,7,6,5,4,3,2,1));
                 printOrderChars = new Vector<String>(List.of("a","b","c","d","e","f","g","h"));
+                break;
         }
+        drawHeaderFooter(printOrderChars);
+        for(int i = 0; i < printOrderNums.size(); i++){
+            String currentColor;
+            if(i % 2 == 0){
+                currentColor = "light";
+            }
+            else{
+                currentColor = "dark";
+            }
+            drawRow(printOrderNums, printOrderNums.elementAt(i), currentColor);
+        }
+        drawHeaderFooter(printOrderChars);
     }
 
     public void clear(){
