@@ -1,10 +1,7 @@
 package ui;
 
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -14,18 +11,22 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class Artist {
-    PrintStream out;
-    private ChessBoard board;
-    private ChessGame.TeamColor playerColor;
+    final private PrintStream out;
+    final private ChessBoard board;
+    final private ChessGame.TeamColor playerColor;
 
     public static void main(String[] args){
         ChessBoard board = new ChessBoard();
-        ChessGame.TeamColor color = ChessGame.TeamColor.BLACK;
+        ChessPosition start = new ChessPosition(2, 1);
+        ChessPosition end = new ChessPosition(3, 1);
+        ChessMove move = new ChessMove(start, end, null);
+        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         board.resetBoard();
         Artist a = new Artist(board, color);
-        a.clear();
         a.drawBoard();
-
+        board.makeMove(move);
+        Artist a1 = new Artist(board, ChessGame.TeamColor.BLACK);
+        a1.drawBoard();
     }
 
     private void drawHeaderFooter(Vector<String> labels){
@@ -42,7 +43,7 @@ public class Artist {
     }
 
     private void drawRow( Vector<Integer> printOrderNums, int index, String currentColor){
-        String label = printOrderNums.get(index-1).toString();
+        String label = String.valueOf(index);
         margin(" "+label);
         String ch;
         setSquareLight();
@@ -138,7 +139,7 @@ public class Artist {
             else{
                 currentColor = "dark";
             }
-            drawRow(printOrderNums, printOrderNums.elementAt(i), currentColor);
+            drawRow(printOrderNums, printOrderNums.get(i), currentColor);
         }
         drawHeaderFooter(printOrderChars);
 
