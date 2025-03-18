@@ -11,8 +11,6 @@ import static ui.EscapeSequences.*;
 
 public class Artist {
     final private PrintStream out;
-    final private ChessBoard board;
-    final private ChessGame.TeamColor playerColor;
 
     private void drawHeaderFooter(Vector<String> labels){
         out.print(SET_BG_COLOR_WHITE);
@@ -27,7 +25,7 @@ public class Artist {
         out.println();
     }
 
-    private void drawRow( Vector<Integer> printOrderCol, int index, String currentColor){
+    private void drawRow(ChessBoard board, Vector<Integer> printOrderCol, int index, String currentColor){
         String label = String.valueOf(index);
         margin(" "+label);
         String ch;
@@ -96,13 +94,11 @@ public class Artist {
         }
     }
 
-    public Artist(chess.ChessBoard board, ChessGame.TeamColor playerColor){
-        this.board = board;
-        this.playerColor = playerColor;
+    public Artist(){
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
-    public void drawBoard(){
+    public void drawBoard(chess.ChessBoard board, ChessGame.TeamColor playerColor){
         Vector<Integer> printOrderRow;
         Vector<Integer> printOrderCol;
         Vector<String> printOrderChars;
@@ -127,7 +123,7 @@ public class Artist {
             else{
                 currentColor = "dark";
             }
-            drawRow(printOrderCol, printOrderRow.get(i), currentColor);
+            drawRow(board, printOrderCol, printOrderRow.get(i), currentColor);
         }
         drawHeaderFooter(printOrderChars);
 
