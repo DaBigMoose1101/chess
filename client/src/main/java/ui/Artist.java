@@ -7,27 +7,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class Artist {
     final private PrintStream out;
     final private ChessBoard board;
     final private ChessGame.TeamColor playerColor;
-
-    public static void main(String[] args){
-        ChessBoard board = new ChessBoard();
-        ChessPosition start = new ChessPosition(2, 1);
-        ChessPosition end = new ChessPosition(3, 1);
-        ChessMove move = new ChessMove(start, end, null);
-        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
-        board.resetBoard();
-        Artist a = new Artist(board, color);
-        a.drawBoard();
-        board.makeMove(move);
-        Artist a1 = new Artist(board, ChessGame.TeamColor.BLACK);
-        a1.drawBoard();
-    }
 
     private void drawHeaderFooter(Vector<String> labels){
         out.print(SET_BG_COLOR_WHITE);
