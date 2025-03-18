@@ -14,13 +14,9 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class Artist {
-    PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    PrintStream out;
     private ChessBoard board;
     private ChessGame.TeamColor playerColor;
-    private int boardWidth = 26;
-    private int boardHeight = 10;
-    private int squareWidth = 3;
-    private int squareHeight = 1;
 
     private void drawHeaderFooter(Vector<String> labels){
         out.print(SET_BG_COLOR_WHITE);
@@ -31,6 +27,7 @@ public class Artist {
             drawSquare(ch);
         }
         margin(" ");
+        out.println();
     }
 
     private void drawRow( Vector<Integer> printOrderNums, int index, String currentColor){
@@ -49,31 +46,20 @@ public class Artist {
             i++;
         }
         margin(printOrderNums.get(index).toString());
+        out.println();
     }
 
     private String getIcon(ChessPiece piece, String ch){
-        String res = ch;
-        switch (piece.getPieceType()){
-            case ChessPiece.PieceType.KING:
-                res = "K";
-                break;
-            case ChessPiece.PieceType.QUEEN:
-                res = "Q";
-                break;
-            case ChessPiece.PieceType.BISHOP:
-                res = "B";
-                break;
-            case ChessPiece.PieceType.KNIGHT:
-                res = "N";
-                break;
-            case ChessPiece.PieceType.ROOK:
-                res = "R";
-                break;
-            case ChessPiece.PieceType.PAWN:
-                res = "P";
-                break;
-        }
-        return res;
+        if(piece == null) return ch;
+        return switch (piece.getPieceType()){
+            case ChessPiece.PieceType.KING-> "K";
+            case ChessPiece.PieceType.QUEEN-> "Q";
+            case ChessPiece.PieceType.BISHOP->"B";
+            case ChessPiece.PieceType.KNIGHT->"N";
+            case ChessPiece.PieceType.ROOK->"R";
+            case ChessPiece.PieceType.PAWN->"P";
+        };
+
     }
 
     private void setIconColor(ChessPiece piece){
@@ -109,6 +95,7 @@ public class Artist {
     public Artist(chess.ChessBoard board, ChessGame.TeamColor playerColor){
         this.board = board;
         this.playerColor = playerColor;
+        out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
     public void drawBoard(){
@@ -136,10 +123,12 @@ public class Artist {
             drawRow(printOrderNums, printOrderNums.elementAt(i), currentColor);
         }
         drawHeaderFooter(printOrderChars);
+
     }
 
     public void clear(){
         out.print(ERASE_SCREEN);
+        out.println();
     }
 
 }
