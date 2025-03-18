@@ -3,6 +3,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -21,10 +23,26 @@ public class Artist {
     private int squareHeight = 1;
 
     private void drawHeaderFooter(Vector<String> labels){
+        out.print(SET_BG_COLOR_WHITE);
+        out.print(SET_TEXT_BOLD);
+        out.print(SET_TEXT_COLOR_BLUE);
+    }
+
+    private void drawRow(Vector<String> printOrderChars, Vector<Integer> printOrderNums, int index){
+        margin(printOrderChars.get(index));
+        for(int i = 1; i < 9; i++){
+            ChessPosition pos = new ChessPosition(index, printOrderNums.get(i));
+            ChessPiece piece = board.getPiece(pos);
+            drawSquare(piece);
+        }
+        margin(printOrderChars.get(index));
+    }
+
+    private void margin(String ch){
 
     }
 
-    private void drawRow(){
+    private void drawSquare(ChessPiece piece){
 
     }
 
