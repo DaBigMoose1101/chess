@@ -40,10 +40,6 @@ public class Client {
 
     }
 
-    private void observeGame(){
-
-    }
-
     private void help(String type){
 
     }
@@ -158,6 +154,8 @@ public class Client {
     }
 
     public void startLoop(){
+        System.out.println("Welcome to Big Moose Chess");
+        System.out.println("Please choose from the following menus");
         preLoginLoop();
         System.out.println("Goodbye!");
     }
