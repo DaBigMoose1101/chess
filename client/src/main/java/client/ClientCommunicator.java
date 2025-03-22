@@ -12,20 +12,30 @@ public class ClientCommunicator {
 
     }
 
+    private void setURL(){
+
+    }
+
+    private void executeRequest(){
+
+    }
+
     public ClientCommunicator(){
 
     }
 
-    public void getRequest(){
+    public void getRequest(String url, String header, String body){
+        String method = "GET";
 
     }
 
-    public void postRequest(){
+    public void postRequest(String url, String header, String body){
+        String method = "POST";
 
     }
 
-    public void putRequest(){
-
+    public void putRequest(String url, String header, String body){
+        String method = "PUT";
     }
 
 

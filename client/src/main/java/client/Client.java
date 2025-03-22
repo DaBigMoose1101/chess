@@ -1,7 +1,9 @@
+package client;
+
 import chess.ChessBoard;
 import chess.ChessGame;
 import ui.Artist;
-import client.ServerFacade;
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.Vector;
@@ -158,11 +160,6 @@ public class Client {
         System.out.println("Please choose from the following menus");
         preLoginLoop();
         System.out.println("Goodbye!");
-    }
-
-    public static void main(String[] args){
-        Client c = new Client();
-        c.startLoop();
     }
 
 
