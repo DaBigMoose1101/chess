@@ -1,16 +1,23 @@
 package client;
 
 import chess.ChessGame;
-import client.ClientCommunicator;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import records.*;
 
 
 
 public class ServerFacade {
-    String serverURL;
-    public ServerFacade(){
-        this.serverURL = "example url";
+    private final String serverURL;
+    private final String port;
+
+    private ClientCommunicator getCommunicator(String path, String method){
+        return new ClientCommunicator(serverURL + port + path, method);
+    }
+
+    public ServerFacade(int port, String serverURL){
+        this.serverURL = serverURL;
+        this.port = Integer.toString(port);
     }
 
     public Object register(String username, String password, String email){
@@ -18,9 +25,10 @@ public class ServerFacade {
         Gson serializer = new Gson();
         RegisterRequest req = new RegisterRequest(username, password, email);
         String body = serializer.toJson(req);
-        ClientCommunicator comm = new ClientCommunicator();
+        ClientCommunicator comm = getCommunicator(path, "POST");
+        String responseString;
         try{
-            comm.postRequest(serverURL + path, null, body);
+            responseString = comm.executeRequest("", body);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -30,19 +38,33 @@ public class ServerFacade {
     }
 
     public Object login(String username, String password){
-        String path = "/user";
+        String path = "/session";
         Gson serializer = new Gson();
         LoginRequest req = new LoginRequest(username, password);
         String body = serializer.toJson(req);
+        ClientCommunicator comm = getCommunicator(path, "PUT");
+        String responseString;
+        try{
+            responseString = comm.executeRequest("", body);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return null;
     }
 
     public Object logout(String authToken){
-        String path = "/user";
+        String path = "/session";
         Gson serializer = new Gson();
         LogoutRequest req = new LogoutRequest(authToken);
-        String body = serializer.toJson(req);
+        String header = serializer.toJson(req);
+        ClientCommunicator comm = getCommunicator(path, "DELETE");
+        String responseString;
+        try{
+            responseString = comm.executeRequest(header, "");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return null;
     }
@@ -52,11 +74,22 @@ public class ServerFacade {
         Gson serializer = new Gson();
         CreateGameRequest req = new CreateGameRequest(gameName);
         String body = serializer.toJson(req);
-        ClientCommunicator comm = new ClientCommunicator();
+        ClientCommunicator comm = getCommunicator(path, "POST");
+        String responseString;
         try{
-            comm.postRequest(serverURL + path, authToken, body);
+            responseString = comm.executeRequest(authToken, body);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+
+        try{
+            CreateGameResponse response = serializer.fromJson(responseString, CreateGameResponse.class);
+        } catch (JsonSyntaxException e) {
+            try{
+                ErrorResponse err = serializer.fromJson(responseString, ErrorResponse.class);
+            } catch (JsonSyntaxException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return null;
@@ -67,6 +100,13 @@ public class ServerFacade {
         Gson serializer = new Gson();
         GamesListRequest req = new GamesListRequest(authToken);
         String header = serializer.toJson(req);
+        ClientCommunicator comm = getCommunicator(path, "PUT");
+        String responseString;
+        try{
+            responseString = comm.executeRequest(authToken, "");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return null;
     }
@@ -76,6 +116,13 @@ public class ServerFacade {
         Gson serializer = new Gson();
         JoinGameRequest req = new JoinGameRequest(color, gameId);
         String body = serializer.toJson(req);
+        ClientCommunicator comm = getCommunicator(path, "PUT");
+        String responseString;
+        try{
+            responseString = comm.executeRequest(authToken, body);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return null;
     }

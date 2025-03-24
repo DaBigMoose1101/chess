@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import records.CreateGameResponse;
 import ui.Artist;
 
 import java.util.Scanner;
@@ -31,7 +32,17 @@ public class Client {
     }
 
     private void createGame(){
-
+        System.out.println("Enter a game name: ");
+        String gameName ="";
+        Scanner s = new Scanner(System.in);
+        gameName = s.nextLine();
+        var response = serverFacade.createGame(authToken, gameName);
+        if(response instanceof CreateGameResponse){
+            System.out.println(((CreateGameResponse) response).gameID());
+        }
+        else{
+            System.out.println("Error:\n");
+        }
     }
 
     private void getGameList(){
@@ -152,7 +163,7 @@ public class Client {
     public Client(){
         authorized = false;
         artist = new Artist();
-        serverFacade = new ServerFacade();
+        serverFacade = new ServerFacade(8080, "http//:localHost:");
     }
 
     public void startLoop(){
