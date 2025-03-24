@@ -1,15 +1,11 @@
 package server;
 
 
-
 import dataaccess.*;
 import handler.DatabaseAdminHandler;
 import handler.GameHandler;
 import handler.UserHandler;
-import dataaccess.DatabaseManager;
 import spark.*;
-
-import java.sql.SQLException;
 
 public class Server {
     final private UserDAO userDataAccess;
@@ -17,7 +13,7 @@ public class Server {
     final private GameDAO gameDataAccess;
     public Server(){
         try {
-            ChessDatabase database = new ChessDatabase();
+            DatabaseManager.createDatabase();
             this.userDataAccess = new UserDatabaseDAO();
             this.authDataAccess = new AuthDatabaseDAO();
             this.gameDataAccess = new GameDatabaseDAO();
@@ -47,8 +43,6 @@ public class Server {
         Spark.get("/game", this::getGameList);
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearServer);
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
