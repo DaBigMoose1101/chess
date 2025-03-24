@@ -3,8 +3,10 @@ package client;
 import chess.ChessBoard;
 import chess.ChessGame;
 import records.CreateGameResponse;
+import records.ErrorResponse;
+import records.LoginResponse;
+import records.RegisterResponse;
 import ui.Artist;
-
 import java.util.Scanner;
 import java.util.List;
 import java.util.Vector;
@@ -13,18 +15,59 @@ import java.util.Vector;
 public class Client {
     private Boolean authorized;
     private String authToken;
-    private String username;
     private ChessBoard board;
     private ChessGame.TeamColor color;
-    private Artist artist;
+    private final Artist artist;
     final private ServerFacade serverFacade;
 
     private void register(){
-        authorized = true;
+        Scanner s = new Scanner(System.in);
+        while(!authorized) {
+            System.out.println("Return to menu by leaving all fields blank");
+
+            String username;
+            String password;
+            String email;
+            System.out.println("Enter Username: ");
+            username = s.nextLine();
+            System.out.println("Enter Password");
+            password = s.nextLine();
+            System.out.println("Enter email");
+            email = s.nextLine();
+            if(email.isEmpty() && password.isEmpty() && username.isEmpty()){
+                return;
+            }
+            var response = serverFacade.register(username, password, email);
+            if(response instanceof RegisterResponse){
+                authorized = true;
+                authToken = ((RegisterResponse) response).authToken();
+            }
+            else{
+                System.out.println(((ErrorResponse) response).message());
+            }
+        }
+
     }
 
     private void login(){
-        authorized = true;
+        Scanner s = new Scanner(System.in);
+        while(!authorized){
+            System.out.println("Return to menu by leaving all fields blank");
+            String username;
+            String password;
+            System.out.println("Enter Username: ");
+            username = s.nextLine();
+            System.out.println("Enter Password");
+            password = s.nextLine();
+
+            if(password.isEmpty() && username.isEmpty()){
+                return;
+            }
+            var response = serverFacade.login(username, password);
+            if(response instanceof LoginResponse){
+
+            }
+        }
     }
 
     private void logout(){
@@ -33,7 +76,7 @@ public class Client {
 
     private void createGame(){
         System.out.println("Enter a game name: ");
-        String gameName ="";
+        String gameName;
         Scanner s = new Scanner(System.in);
         gameName = s.nextLine();
         var response = serverFacade.createGame(authToken, gameName);
@@ -71,11 +114,9 @@ public class Client {
             int flag = getFlag();
             if(flag == 1){
                 register();
-                authorized = true;
             }
             else if(flag == 2){
                 login();
-                authorized = true;
             }
             else if(flag == 3){
                 help("pre");
@@ -146,7 +187,8 @@ public class Client {
                     handleInvalid();
                 }
             }
-
+            artist.clear();
+            artist.drawBoard(board, color);
         }
     }
 

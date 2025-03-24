@@ -6,7 +6,6 @@ import com.google.gson.JsonSyntaxException;
 import records.*;
 
 
-
 public class ServerFacade {
     private final String serverURL;
     private final String port;
