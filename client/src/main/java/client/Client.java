@@ -73,7 +73,7 @@ public class Client {
     private void logout(){
        Object response = serverFacade.logout(authToken);
        if(response instanceof LogoutResponse){
-           return;
+           authorized = false;
        }
        else{
            System.out.println("Error: " + ((ErrorResponse)response).message());
@@ -247,7 +247,7 @@ public class Client {
     public Client(){
         authorized = false;
         artist = new Artist();
-        serverFacade = new ServerFacade(8080, "http//:localHost:");
+        serverFacade = new ServerFacade("http://localhost:8080");
         board = new ChessBoard();
         board.resetBoard();
     }

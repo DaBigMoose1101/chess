@@ -28,16 +28,17 @@ public class ClientCommunicator {
     }
 
     public String executeRequest(String header, String body) throws URISyntaxException, IOException {
-        URL requestURL = new URI(url).toURL();
-        HttpURLConnection http = (HttpURLConnection) requestURL.openConnection();
+        URI requestURL = new URI(url);
+        HttpURLConnection http = (HttpURLConnection) requestURL.toURL().openConnection();
         http.setReadTimeout(5000);
         http.setRequestMethod(method);
-        http.setDoOutput(true);
-        http.addRequestProperty("authorization", header);
-        try(var outputStream = http.getOutputStream()){
-            outputStream.write(body.getBytes());
+        if(!body.isEmpty()) {
+            http.setDoOutput(true);
+            try(var outputStream = http.getOutputStream()){
+                outputStream.write(body.getBytes());
+            }
         }
-
+        http.addRequestProperty("authorization", header);
         http.connect();
         var status = http.getResponseCode();
         if(status >= 200 && status < 300) {

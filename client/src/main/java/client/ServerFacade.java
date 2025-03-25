@@ -2,20 +2,21 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.GameData;
 import records.*;
+
+import java.util.Vector;
 
 
 public class ServerFacade {
     private final String serverURL;
-    private final String port;
 
     private ClientCommunicator getCommunicator(String path, String method){
-        return new ClientCommunicator(serverURL + port + path, method);
+        return new ClientCommunicator(serverURL + path, method);
     }
 
-    public ServerFacade(int port, String serverURL){
+    public ServerFacade(String serverURL){
         this.serverURL = serverURL;
-        this.port = Integer.toString(port);
     }
 
     public Object register(String username, String password, String email){
@@ -30,12 +31,10 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof RegisterResponse){
-            return ((RegisterResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, RegisterResponse.class);
         }
     }
 
@@ -44,19 +43,17 @@ public class ServerFacade {
         Gson serializer = new Gson();
         LoginRequest req = new LoginRequest(username, password);
         String body = serializer.toJson(req);
-        ClientCommunicator comm = getCommunicator(path, "PUT");
+        ClientCommunicator comm = getCommunicator(path, "POST");
         String responseString;
         try{
             responseString = comm.executeRequest("", body);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof LoginResponse){
-            return ((LoginResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, LoginResponse.class);
         }
     }
 
@@ -64,20 +61,17 @@ public class ServerFacade {
         String path = "/session";
         Gson serializer = new Gson();
         LogoutRequest req = new LogoutRequest(authToken);
-        String header = serializer.toJson(req);
         ClientCommunicator comm = getCommunicator(path, "DELETE");
         String responseString;
         try{
-            responseString = comm.executeRequest(header, "");
+            responseString = comm.executeRequest(authToken, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof LogoutResponse){
-            return ((LogoutResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, LogoutResponse.class);
         }
     }
 
@@ -93,12 +87,10 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof CreateGameResponse){
-            return ((CreateGameResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, CreateGameResponse.class);
         }
     }
 
@@ -106,7 +98,6 @@ public class ServerFacade {
         String path = "/game";
         Gson serializer = new Gson();
         GamesListRequest req = new GamesListRequest(authToken);
-        String header = serializer.toJson(req);
         ClientCommunicator comm = getCommunicator(path, "GET");
         String responseString;
         try{
@@ -114,12 +105,16 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof GamesListResponse){
-            return ((GamesListResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else if(!responseString.isEmpty()) {
+            return new Gson().fromJson(responseString, GamesListResponse.class);
         }
         else{
-            return ((ErrorResponse) response);
+            GameData game = new GameData(0,"","","", null);
+            Vector<GameData> games = new Vector<>();
+            games.add(game);
+            return new GamesListResponse(games);
         }
     }
 
@@ -135,12 +130,10 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof JoinGameResponse){
-            return ((JoinGameResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, JoinGameResponse.class);
         }
     }
 
@@ -156,12 +149,10 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Object response = new Gson().fromJson(responseString, Object.class);
-        if(response instanceof ClearResponse){
-            return ((ClearResponse) response);
-        }
-        else{
-            return ((ErrorResponse) response);
+        if (responseString.contains("message")) {
+            return new Gson().fromJson(responseString, ErrorResponse.class);
+        } else {
+            return new Gson().fromJson(responseString, ClearResponse.class);
         }
 
     }
