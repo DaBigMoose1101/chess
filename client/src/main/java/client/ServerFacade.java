@@ -107,15 +107,10 @@ public class ServerFacade {
         }
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
-        } else if(!responseString.isEmpty()) {
+        } else{
             return new Gson().fromJson(responseString, GamesListResponse.class);
         }
-        else{
-            GameData game = new GameData(0,"","","", null);
-            Vector<GameData> games = new Vector<>();
-            games.add(game);
-            return new GamesListResponse(games);
-        }
+
     }
 
     public Object joinGame(String authToken, ChessGame.TeamColor color, int gameId){
