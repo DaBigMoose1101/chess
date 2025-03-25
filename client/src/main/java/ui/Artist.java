@@ -126,7 +126,7 @@ public class Artist {
             drawRow(board, printOrderCol, printOrderRow.get(i), currentColor);
         }
         drawHeaderFooter(printOrderChars);
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(RESET_TEXT_COLOR);
 
     }
 
