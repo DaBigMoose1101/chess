@@ -2,10 +2,8 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import records.CreateGameResponse;
-import records.ErrorResponse;
-import records.LoginResponse;
-import records.RegisterResponse;
+import model.GameData;
+import records.*;
 import ui.Artist;
 import java.util.Scanner;
 import java.util.List;
@@ -38,9 +36,8 @@ public class Client {
                 return;
             }
             var response = serverFacade.register(username, password, email);
-            if(response instanceof RegisterResponse){
-                authorized = true;
-                authToken = ((RegisterResponse) response).authToken();
+            if(response instanceof RegisterResponse(String user, String token)){
+                authorizeUser(token);
             }
             else{
                 System.out.println(((ErrorResponse) response).message());
@@ -64,14 +61,23 @@ public class Client {
                 return;
             }
             var response = serverFacade.login(username, password);
-            if(response instanceof LoginResponse){
-
+            if(response instanceof LoginResponse(String user, String token)){
+                authorizeUser(token);
+            }
+            else{
+                System.out.println("Error: " + ((ErrorResponse)response).message());
             }
         }
     }
 
     private void logout(){
-        authorized = false;
+       Object response = serverFacade.logout(authToken);
+       if(response instanceof LogoutResponse){
+           return;
+       }
+       else{
+           System.out.println("Error: " + ((ErrorResponse)response).message());
+       }
     }
 
     private void createGame(){
@@ -84,20 +90,58 @@ public class Client {
             System.out.println(((CreateGameResponse) response).gameID());
         }
         else{
-            System.out.println("Error:\n");
+            System.out.println("Error: " + ((ErrorResponse)response).message());
         }
     }
 
     private void getGameList(){
-
+        Object response = serverFacade.getGameList(authToken);
+        if(response instanceof GamesListResponse(Vector<GameData> games)){
+            for(GameData game : games){
+                System.out.printf(" Game name: %s\n White Player: %s\nBlack Player: %s\n Game ID %d \n\n",
+                        game.gameName(),
+                        game.whiteUsername(),
+                        game.blackUsername(),
+                        game.gameID());
+            }
+        }
     }
 
     private void joinGame(){
-
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter Game ID: ");
+        int gameID = s.nextInt();
+        System.out.println("Choose color: 1.White 2.Black 3.Observe");
+        ChessGame.TeamColor chosenColor;
+        while(true) {
+            int flag = getFlag();
+            if (flag == 1 || flag == 3) {
+                chosenColor = ChessGame.TeamColor.WHITE;
+                break;
+            } else if (flag == 2) {
+                chosenColor = ChessGame.TeamColor.BLACK;
+                break;
+            } else {
+              handleInvalid();
+            }
+        }
+        Object response = serverFacade.joinGame(authToken, chosenColor,gameID);
+        if(response instanceof JoinGameResponse){
+            color = chosenColor;
+        }
+        else{
+            System.out.println(((ErrorResponse)response).message());
+            joinGame();
+        }
     }
 
     private void help(String type){
 
+    }
+
+    private void authorizeUser(String authT){
+        authorized = true;
+        authToken = authT;
     }
 
     private void printMenu(Vector<String> menu){
@@ -108,7 +152,6 @@ public class Client {
 
     private void preLoginLoop(){
         Vector<String> menu = new Vector<String>(List.of("1: Register", "2: Login", "3: Help", "4: Quit"));
-        String response;
         while(true){
             printMenu(menu);
             int flag = getFlag();
@@ -136,7 +179,6 @@ public class Client {
     private void postLoginLoop(){
         Vector<String> menu = new Vector<String>(List.of("1: Create Game",
                 "2: List Games", "3: Play game", "4: ObserveGame", "5: Logout", "6: Help"));
-        String response;
         while(true){
             printMenu(menu);
             int flag = getFlag();

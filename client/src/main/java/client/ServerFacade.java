@@ -2,7 +2,6 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import records.*;
 
 
@@ -31,9 +30,13 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-        return null;
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof RegisterResponse){
+            return ((RegisterResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object login(String username, String password){
@@ -48,8 +51,13 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return null;
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof LoginResponse){
+            return ((LoginResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object logout(String authToken){
@@ -64,8 +72,13 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return null;
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof LogoutResponse){
+            return ((LogoutResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object createGame(String authToken, String gameName){
@@ -80,18 +93,13 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        try{
-            CreateGameResponse response = serializer.fromJson(responseString, CreateGameResponse.class);
-        } catch (JsonSyntaxException e) {
-            try{
-                ErrorResponse err = serializer.fromJson(responseString, ErrorResponse.class);
-            } catch (JsonSyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof CreateGameResponse){
+            return ((CreateGameResponse) response);
         }
-
-        return null;
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object getGameList(String authToken){
@@ -99,15 +107,20 @@ public class ServerFacade {
         Gson serializer = new Gson();
         GamesListRequest req = new GamesListRequest(authToken);
         String header = serializer.toJson(req);
-        ClientCommunicator comm = getCommunicator(path, "PUT");
+        ClientCommunicator comm = getCommunicator(path, "GET");
         String responseString;
         try{
             responseString = comm.executeRequest(authToken, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return null;
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof GamesListResponse){
+            return ((GamesListResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object joinGame(String authToken, ChessGame.TeamColor color, int gameId){
@@ -122,13 +135,34 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return null;
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof JoinGameResponse){
+            return ((JoinGameResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
     }
 
     public Object deleteDB(){
         String path = "/db";
+        Gson serializer = new Gson();
+        ClearRequest req = new ClearRequest();
+        String body = serializer.toJson(req);
+        ClientCommunicator comm = getCommunicator(path, "DELETE");
+        String responseString;
+        try{
+            responseString = comm.executeRequest("",body);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Object response = new Gson().fromJson(responseString, Object.class);
+        if(response instanceof ClearResponse){
+            return ((ClearResponse) response);
+        }
+        else{
+            return ((ErrorResponse) response);
+        }
 
-        return null;
     }
 }
