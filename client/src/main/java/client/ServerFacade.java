@@ -1,11 +1,8 @@
 package client;
 
+import records.*;
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.GameData;
-import records.*;
-
-import java.util.Vector;
 
 
 public class ServerFacade {

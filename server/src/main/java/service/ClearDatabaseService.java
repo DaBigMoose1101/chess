@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.*;
 import records.ClearResponse;
-import records.ErrorResponse;
 
 public class ClearDatabaseService {
     final private AuthDAO authDataAccess;

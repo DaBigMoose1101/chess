@@ -3,9 +3,9 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import records.*;
 import service.GameService;
 import spark.Response;
+import records.*;
 
 public class GameHandler {
     final private GameDAO gameDataAccess;

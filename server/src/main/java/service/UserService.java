@@ -1,18 +1,13 @@
 package service;
 
 import org.mindrot.jbcrypt.BCrypt;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Set;
+import records.*;
 import java.util.UUID;
-
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
 import model.AuthData;
-import records.*;
 
 public class UserService {
     final private UserDAO userDataAccess;

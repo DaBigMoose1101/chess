@@ -1,9 +1,9 @@
 package client;
 
+import records.*;
 import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
-import records.*;
 import ui.Artist;
 import java.util.Scanner;
 import java.util.List;

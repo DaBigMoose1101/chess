@@ -8,7 +8,6 @@ import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import records.*;
-
 import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;

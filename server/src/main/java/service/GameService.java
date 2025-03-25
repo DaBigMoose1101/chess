@@ -1,12 +1,11 @@
 package service;
 
-import com.google.gson.Gson;
+import records.*;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 import model.AuthData;
-import records.*;
 import chess.ChessGame;
 import chess.ChessGame.TeamColor;
 

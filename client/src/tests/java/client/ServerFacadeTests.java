@@ -1,12 +1,9 @@
 package client;
 
-import chess.ChessGame;
-import model.GameData;
-import org.junit.jupiter.api.*;
 import records.*;
+import chess.ChessGame;
+import org.junit.jupiter.api.*;
 import server.Server;
-
-import java.util.Vector;
 
 
 public class ServerFacadeTests {

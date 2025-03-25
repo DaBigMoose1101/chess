@@ -2,9 +2,9 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import records.*;
 import service.UserService;
 import spark.Response;
+import records.*;
 
 public class UserHandler {
     final private UserDAO userDataAccess;
