@@ -31,6 +31,7 @@ public class ClientCommunicator {
         URI requestURL = new URI(url);
         HttpURLConnection http = (HttpURLConnection) requestURL.toURL().openConnection();
         http.setReadTimeout(5000);
+        http.addRequestProperty("authorization", header);
         http.setRequestMethod(method);
         if(!body.isEmpty()) {
             http.setDoOutput(true);
@@ -38,11 +39,9 @@ public class ClientCommunicator {
                 outputStream.write(body.getBytes());
             }
         }
-        http.addRequestProperty("authorization", header);
-        http.connect();
+        try{
         var status = http.getResponseCode();
         if(status >= 200 && status < 300) {
-
             try (InputStream respBody = http.getInputStream()) {
                 return readResponse(respBody);
             }
@@ -52,6 +51,12 @@ public class ClientCommunicator {
                 return readResponse(err);
             }
         }
+        }
+        finally {
+            http.disconnect();
+        }
+
+
     }
 
 }

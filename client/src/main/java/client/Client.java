@@ -87,7 +87,7 @@ public class Client {
         gameName = s.nextLine();
         var response = serverFacade.createGame(authToken, gameName);
         if(response instanceof CreateGameResponse){
-            System.out.println(((CreateGameResponse) response).gameID());
+            System.out.println("Game ID: " + ((CreateGameResponse) response).gameID());
         }
         else{
             System.out.println("Error: " + ((ErrorResponse)response).message());
@@ -98,12 +98,14 @@ public class Client {
         Object response = serverFacade.getGameList(authToken);
         if(response instanceof GamesListResponse(Vector<GameData> games)){
             for(GameData game : games){
-                System.out.printf(" Game name: %s\n White Player: %s\nBlack Player: %s\n Game ID %d \n\n",
+                System.out.printf(" Game name: %s, White Player: %s,Black Player: %s, Game ID %d\n",
                         game.gameName(),
                         game.whiteUsername(),
                         game.blackUsername(),
                         game.gameID());
+                return;
             }
+            System.out.println("No games exist. Please create one.");
         }
     }
 
@@ -213,6 +215,8 @@ public class Client {
     private void inGameLoop(Boolean isPlayer){
         String menu = "1: Make Move  2: ExitGame  3:Help";
         while(true){
+            artist.clear();
+            artist.drawBoard(board, color);
             if(isPlayer) {
                 System.out.println(menu);
                 int flag = getFlag();
@@ -229,8 +233,7 @@ public class Client {
                     handleInvalid();
                 }
             }
-            artist.clear();
-            artist.drawBoard(board, color);
+
         }
     }
 
