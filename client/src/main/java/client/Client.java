@@ -248,6 +248,8 @@ public class Client {
         authorized = false;
         artist = new Artist();
         serverFacade = new ServerFacade(8080, "http//:localHost:");
+        board = new ChessBoard();
+        board.resetBoard();
     }
 
     public void startLoop(){
