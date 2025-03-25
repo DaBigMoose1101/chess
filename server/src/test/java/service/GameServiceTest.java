@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import records.*;
@@ -13,16 +14,25 @@ import java.util.Vector;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
-    private AuthDAO authDataAccess = new AuthMemoryDAO();
-    private GameDAO gameDataAccess = new GameMemoryDAO();
+    private static AuthDAO authDataAccess;
+    private static GameDAO gameDataAccess;
     private GameService service;
     private AuthData token1;
     private AuthData token2;
 
+    @AfterAll
+    static void clearDB() throws DataAccessException {
+        authDataAccess.deleteDB();
+        gameDataAccess.deleteDB();
+
+    }
+
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.authDataAccess = new AuthMemoryDAO();
-        this.gameDataAccess = new GameMemoryDAO();
+        authDataAccess = new AuthDatabaseDAO();
+        gameDataAccess = new GameDatabaseDAO();
+        authDataAccess.deleteDB();
+        gameDataAccess .deleteDB();
         this.service = new GameService(authDataAccess, gameDataAccess);
         this.token1 = new AuthData("abc", "bob");
         this.token2 = new AuthData("def", "bill");
@@ -168,8 +178,7 @@ class GameServiceTest {
     void fullGameGameList() throws DataAccessException {
         var serializer = new Gson();
         Vector<GameData> games = new Vector<>();
-        GameData game = new GameData(1, "Billy",
-                "Joel", "game", null);
+        GameData game = new GameData(1,null, null, "game", null);
         games.add(game);
         GamesListResponse expectedResponse = new GamesListResponse(games);
         String expectedString = serializer.toJson(expectedResponse);

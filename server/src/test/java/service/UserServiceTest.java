@@ -10,13 +10,17 @@ import records.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
-    final private AuthDAO authDataAccess = new AuthMemoryDAO();
-    final private UserDAO userDataAccess = new UserMemoryDAO();
+    private AuthDAO authDataAccess;
+    private UserDAO userDataAccess;
     private UserService service;
+
+
 
     @BeforeEach
     void setUp() {
         try {
+            authDataAccess = new AuthDatabaseDAO();
+            userDataAccess = new UserDatabaseDAO();
             authDataAccess.deleteDB();
             userDataAccess.deleteDB();
             service = new UserService(userDataAccess, authDataAccess);

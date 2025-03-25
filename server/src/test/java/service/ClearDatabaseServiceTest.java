@@ -17,9 +17,9 @@ class ClearDatabaseServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.authDataAccess = new AuthMemoryDAO();
-        this.userDataAccess = new UserMemoryDAO();
-        this.gameDataAccess = new GameMemoryDAO();
+        this.authDataAccess = new AuthDatabaseDAO();
+        this.userDataAccess = new UserDatabaseDAO();
+        this.gameDataAccess = new GameDatabaseDAO();
         this.service = new ClearDatabaseService(authDataAccess, userDataAccess, gameDataAccess);
         AuthData token = new AuthData("abc", "bob");
         UserData user = new UserData("bob", "gameboy", "gmail");

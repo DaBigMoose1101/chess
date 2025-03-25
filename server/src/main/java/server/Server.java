@@ -21,15 +21,6 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
-    public Server(String database){
-        try {
-            this.userDataAccess = new UserMemoryDAO();
-            this.authDataAccess = new AuthMemoryDAO();
-            this.gameDataAccess = new GameMemoryDAO();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
