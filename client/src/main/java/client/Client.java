@@ -5,6 +5,8 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import ui.Artist;
+
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.List;
 import java.util.Vector;
@@ -17,6 +19,7 @@ public class Client {
     private ChessGame.TeamColor color;
     private final Artist artist;
     final private ServerFacade serverFacade;
+    private HashMap<Integer, GameData> gameList;
 
     private void register(){
         Scanner s = new Scanner(System.in);
@@ -97,44 +100,83 @@ public class Client {
     private void getGameList(){
         Object response = serverFacade.getGameList(authToken);
         if(response instanceof GamesListResponse(Vector<GameData> games)){
+            int i = 1;
             for(GameData game : games){
-                System.out.printf(" Game name: %s, White Player: %s,Black Player: %s, Game ID %d\n",
+
+                System.out.printf("%d. Game name: %s, White Player: %s,Black Player: %s\n",
+                        i,
                         game.gameName(),
                         game.whiteUsername(),
-                        game.blackUsername(),
-                        game.gameID());
-                return;
+                        game.blackUsername());
+                gameList.put(i, game);
+                i++;
             }
             System.out.println("No games exist. Please create one.");
         }
     }
 
-    private void joinGame(){
+    private boolean joinGame(){
         Scanner s = new Scanner(System.in);
         System.out.println("Enter Game ID: ");
-        int gameID = s.nextInt();
-        System.out.println("Choose color: 1.White 2.Black 3.Observe");
+        int iD;
+        int gameID = 0;
+        try {
+            iD = s.nextInt();
+            gameID = gameList.get(iD).gameID();
+        } catch (Exception e) {
+            handleInvalid();
+            return false;
+        }
+        System.out.println("Choose color: 1.White 2.Black");
         ChessGame.TeamColor chosenColor;
         while(true) {
             int flag = getFlag();
-            if (flag == 1 || flag == 3) {
+            if (flag == 1 ) {
                 chosenColor = ChessGame.TeamColor.WHITE;
                 break;
             } else if (flag == 2) {
                 chosenColor = ChessGame.TeamColor.BLACK;
                 break;
-            } else {
+            }
+            else {
               handleInvalid();
+              return false;
             }
         }
-        Object response = serverFacade.joinGame(authToken, chosenColor,gameID);
+        Object response = serverFacade.joinGame(authToken, chosenColor, gameID);
         if(response instanceof JoinGameResponse){
             color = chosenColor;
+            return true;
         }
         else{
             System.out.println(((ErrorResponse)response).message());
-            joinGame();
+            return false;
         }
+    }
+
+    private void observeGame(){
+        Scanner s = new Scanner(System.in);
+        int gameID = 0;
+        int iD = getFlag();
+        try{
+            gameID = gameList.get(iD).gameID();
+        }
+        catch (Exception e){
+            handleInvalid();
+            return;
+        }
+        artist.drawBoard(board, ChessGame.TeamColor.WHITE);
+        System.out.println("1. exit game");
+        int flag = getFlag();
+        if(flag == 1){
+            return;
+        }
+        else{
+            handleInvalid();
+            observeGame();
+        }
+
+
     }
 
     private void help(){
@@ -191,12 +233,12 @@ public class Client {
                 getGameList();
             }
             else if(flag == 3){
-                joinGame();
-                inGameLoop(true);
+                if(joinGame()) {
+                    inGameLoop(true);
+                }
             }
             else if(flag == 4){
-                joinGame();
-                inGameLoop(false);
+                observeGame();
             }
             else if(flag == 5){
                 logout();
@@ -246,7 +288,13 @@ public class Client {
         String response = "";
         Scanner s = new Scanner(System.in);
         response = s.nextLine();
-        return Integer.parseInt(response);
+        int returnVal;
+        try {
+            returnVal = Integer.parseInt(response);
+            return returnVal;
+        } catch (Exception e){
+            return 0;
+        }
     }
     public Client(){
         authorized = false;
@@ -254,6 +302,7 @@ public class Client {
         serverFacade = new ServerFacade("http://localhost:8080");
         board = new ChessBoard();
         board.resetBoard();
+        gameList = new HashMap<>();
     }
 
     public Client(int port){
