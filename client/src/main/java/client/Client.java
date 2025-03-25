@@ -215,7 +215,8 @@ public class Client {
     private void inGameLoop(Boolean isPlayer){
         String menu = "1: Make Move  2: ExitGame  3:Help";
         while(true){
-            artist.clear();
+            System.out.println("\033[H\033[2J");
+            System.out.flush();
             artist.drawBoard(board, color);
             if(isPlayer) {
                 System.out.println(menu);
@@ -251,6 +252,15 @@ public class Client {
         authorized = false;
         artist = new Artist();
         serverFacade = new ServerFacade("http://localhost:8080");
+        board = new ChessBoard();
+        board.resetBoard();
+    }
+
+    public Client(int port){
+        String p = Integer.toString(port);
+        authorized = false;
+        artist = new Artist();
+        serverFacade = new ServerFacade("http://localhost:" + p);
         board = new ChessBoard();
         board.resetBoard();
     }

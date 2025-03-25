@@ -22,8 +22,48 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
+    public void register() {
         Assertions.assertTrue(true);
+    }
+    @Test
+    public void registerUsernameTaken(){
+
+    }
+    @Test
+    public void login(){
+
+    }
+    @Test
+    public void loginInvalidPassword(){
+
+    }
+    @Test
+    public void logout(){
+
+    }
+    @Test
+    public void logoutNoAuthToken(){
+
+    }
+    @Test
+    public void createGame(){
+
+    }
+    @Test
+    public void createGameNoName(){
+
+    }
+    @Test
+    public void getGameList(){
+
+    }
+    @Test
+    public void joinGame(){
+
+    }
+    @Test
+    public void joinGameInvalidColorChoice(){
+
     }
 
 }
