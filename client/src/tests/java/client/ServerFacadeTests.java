@@ -107,6 +107,22 @@ public class ServerFacadeTests {
         Assertions.assertInstanceOf(ErrorResponse.class,
                 facade.joinGame(authToken, ChessGame.TeamColor.WHITE, 1));
     }
+
+    @Test
+    public void deleteDB(){
+        postRegisterSetUp();
+        addGames(3);
+        Assertions.assertInstanceOf(ClearResponse.class, facade.deleteDB());
+    }
+    @Test
+    public void deleteDBMultiple(){
+        postRegisterSetUp();
+        addGames(3);
+        Assertions.assertInstanceOf(ClearResponse.class, facade.deleteDB());
+        postRegisterSetUp();
+        addGames(5);
+        Assertions.assertInstanceOf(ClearResponse.class, facade.deleteDB());
+    }
     private void postRegisterSetUp(){
         RegisterResponse res = (RegisterResponse) facade.register("Bob", "bob", "bob");
         username = "Bob";
