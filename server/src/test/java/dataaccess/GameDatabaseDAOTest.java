@@ -64,43 +64,21 @@ class GameDatabaseDAOTest {
 
 
     @Test
-    void getGame() {
-        try(var conn = DatabaseManager.getConnection()){
-            try(var statement = conn.prepareStatement("INSERT INTO games (white_user," +
-                    " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
-                statement.setNull(1, Types.VARCHAR);
-                statement.setNull(2, Types.VARCHAR);
-                statement.setString(3,"game");
-                statement.setString(4,new Gson().toJson(chess, ChessGame.class));
-                statement.executeUpdate();
-            }
-            GameData actual = gameDataAccess.getGame(1);
-            assertNotNull(actual);
-            assertEquals(1, actual.gameID());
-            assertEquals("game", actual.gameName());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void getGame() throws DataAccessException {
+        createGame();
+        GameData actual = gameDataAccess.getGame(1);
+        assertNotNull(actual);
+        assertEquals(1, actual.gameID());
+        assertEquals("game", actual.gameName());
+
 
     }
 
     @Test
-    void getGameBadRequest(){
-
-        try(var conn = DatabaseManager.getConnection()){
-            try(var statement = conn.prepareStatement("INSERT INTO games (white_user," +
-                    " black_user, game_name, game) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
-                statement.setNull(1, Types.VARCHAR);
-                statement.setNull(2, Types.VARCHAR);
-                statement.setString(3,"game");
-                statement.setString(4,new Gson().toJson(chess, ChessGame.class));
-                statement.executeUpdate();
-            }
+    void getGameBadRequest() throws DataAccessException {
+            createGame();
             GameData actual = gameDataAccess.getGame(2);
             assertNull(actual);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
