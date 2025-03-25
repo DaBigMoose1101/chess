@@ -25,6 +25,7 @@ public class ServerFacadeTests {
 
     @AfterAll
     static void stopServer() {
+        facade.deleteDB();
         server.stop();
     }
 
