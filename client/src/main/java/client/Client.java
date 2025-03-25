@@ -137,8 +137,8 @@ public class Client {
         }
     }
 
-    private void help(String type){
-
+    private void help(){
+        System.out.println("Select from the given menu by typing a number corresponding with the given menu item");
     }
 
     private void authorizeUser(String authT){
@@ -164,7 +164,7 @@ public class Client {
                 login();
             }
             else if(flag == 3){
-                help("pre");
+                help();
             }
             else if(flag == 4){
                 return;
@@ -203,7 +203,7 @@ public class Client {
                 return;
             }
             else if(flag == 6){
-                help("post");
+                help();
             }
             else{
                 handleInvalid();
@@ -228,7 +228,7 @@ public class Client {
                     return;
                 }
                 else if(flag == 3){
-                    help("game");
+                    help();
                 }
                 else{
                     handleInvalid();
