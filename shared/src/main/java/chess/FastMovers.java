@@ -23,31 +23,13 @@ public class FastMovers {
     protected void getVertical(){
         for(int i = position.getRow()+1; i < 9; i++){
             ChessPosition pos = new ChessPosition(i, position.getColumn());
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-            else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            }
-            else{
+            if(!validateMove(pos)){
                 break;
             }
         }
         for(int i = position.getRow()-1; i >= 1; i--){
             ChessPosition pos = new ChessPosition(i, position.getColumn());
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-            else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            }
-            else{
+            if(!validateMove(pos)){
                 break;
             }
         }
@@ -55,31 +37,13 @@ public class FastMovers {
     protected void getHorizontal(){
         for(int i = position.getColumn()+1; i < 9; i++){
             ChessPosition pos = new ChessPosition(position.getRow(), i);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-            else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            }
-            else{
+            if(!validateMove(pos)){
                 break;
             }
         }
         for(int i = position.getColumn()-1; i >= 1; i--){
             ChessPosition pos = new ChessPosition(position.getRow(), i);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-            }
-            else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            }
-            else{
+            if(!validateMove(pos)){
                 break;
             }
         }
@@ -89,21 +53,13 @@ public class FastMovers {
         int col = position.getColumn()+1;
         while(row < 9 && col < 9){
             ChessPosition pos = new ChessPosition(row, col);
-            if(checkPosition(pos)){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                row++;
-                col++;
-            }
-            else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
+            if(!validateMove(pos)){
                 break;
             }
             else {
-                break;
+                row++;
+                col++;
             }
-
         }
     }
     protected void getDiagonal2() {
@@ -111,17 +67,12 @@ public class FastMovers {
         int col = position.getColumn()-1;
         while (row < 9 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
-            if (checkPosition(pos)) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
+            if(!validateMove(pos)){
+                break;
+            }
+            else {
                 row++;
                 col--;
-            } else if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            } else {
-                break;
             }
         }
     }
@@ -130,17 +81,12 @@ public class FastMovers {
         int col = position.getColumn()-1;
         while (row >= 1 && col >= 1) {
             ChessPosition pos = new ChessPosition(row, col);
-            if (checkPosition(pos)) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
+            if(!validateMove(pos)){
+                break;
+            }
+            else {
                 row--;
                 col--;
-            } else if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            } else {
-                break;
             }
         }
     }
@@ -149,22 +95,29 @@ public class FastMovers {
         int col = position.getColumn()+1;
         while (row >=1  && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
-            if (checkPosition(pos)) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
+            if(!validateMove(pos)){
+                break;
+            }
+            else {
                 row--;
                 col++;
-            } else if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()) {
-                ChessMove move = new ChessMove(position, pos, null);
-                moves.add(move);
-                break;
-            } else {
-                break;
             }
         }
     }
 
-    protected void getMove(){
-
+    protected Boolean validateMove(ChessPosition pos){
+        if(checkPosition(pos)){
+            ChessMove move = new ChessMove(position, pos, null);
+            moves.add(move);
+            return true;
+        }
+        else if ( board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != board.getPiece(position).getTeamColor()){
+            ChessMove move = new ChessMove(position, pos, null);
+            moves.add(move);
+            return false;
+        }
+        else{
+            return false;
+        }
     }
 }

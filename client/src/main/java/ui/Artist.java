@@ -30,7 +30,7 @@ public class Artist {
         margin(" "+label);
         String ch;
         setSquareLight();
-        if(currentColor.equals("dark")) setSquareDark();
+        if(currentColor.equals("dark")) {setSquareDark();}
         for(int num : printOrderCol){
             ChessPosition pos = new ChessPosition(index, num);
             ch = getIcon(board.getPiece(pos), " ");
@@ -44,7 +44,7 @@ public class Artist {
     }
 
     private String getIcon(ChessPiece piece, String ch){
-        if(piece == null) return ch;
+        if(piece == null) {return ch;}
         return switch (piece.getPieceType()){
             case ChessPiece.PieceType.KING-> "K";
             case ChessPiece.PieceType.QUEEN-> "Q";
