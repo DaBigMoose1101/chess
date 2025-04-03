@@ -7,8 +7,9 @@ public class WebSocketFacade extends Endpoint {
 
     public Session session;
 
-    public WebSocketFacade() throws Exception {
-        URI uri = new URI("ws://localhost:8080/ws");
+    public WebSocketFacade(String url) throws Exception {
+        url = url.replace("http", "ws");
+        URI uri = new URI(url + "/ws");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
 
