@@ -5,14 +5,15 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import ui.Artist;
-
+import websocket.messages.ServerMessage;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.List;
 import java.util.Vector;
 
 
-public class Client {
+
+public class Client implements WebSocketObserver {
     private Boolean authorized;
     private String authToken;
     private ChessBoard board;
@@ -321,5 +322,8 @@ public class Client {
         System.out.println("Goodbye!");
     }
 
+    public void notify(ServerMessage message){
+
+    }
 
 }
