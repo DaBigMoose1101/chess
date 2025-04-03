@@ -21,7 +21,6 @@ public class WebSocketHandler {
     public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
         gameDataAccess = game;
-
     }
 
     @OnWebSocketMessage
