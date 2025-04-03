@@ -180,6 +180,10 @@ public class Client implements WebSocketObserver {
 
     }
 
+    private void makeMove(){
+
+    }
+
     private void help(){
         System.out.println("Select from the given menu by typing a number corresponding with the given menu item");
     }
