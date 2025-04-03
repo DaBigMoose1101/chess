@@ -16,10 +16,9 @@ import java.io.IOException;
 public class WebSocketHandler {
     static AuthDAO authDataAccess;
     static GameDAO gameDataAccess;
-    public final WebSocketService service = new WebSocketService(authDataAccess, gameDataAccess);
-    Gson serializer = new Gson();
+    private final Gson serializer = new Gson();
 
-    static void initialize(AuthDAO auth, GameDAO game){
+    public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
         gameDataAccess = game;
 
@@ -27,6 +26,7 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message){
+        WebSocketService service = new WebSocketService(authDataAccess, gameDataAccess);
         UserGameCommand com = serializer.fromJson(message, UserGameCommand.class);
         ServerMessage serverMessage;
         try {

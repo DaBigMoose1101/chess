@@ -18,6 +18,7 @@ public class Server {
             this.userDataAccess = new UserDatabaseDAO();
             this.authDataAccess = new AuthDatabaseDAO();
             this.gameDataAccess = new GameDatabaseDAO();
+            WebSocketHandler.initialize(authDataAccess, gameDataAccess);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

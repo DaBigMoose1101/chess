@@ -11,8 +11,9 @@ import websocket.messages.ServerMessage;
 public class WebSocketService {
     private final AuthDAO authDataAccess;
     private final GameDAO gameDataAccess;
-    int gameId;
-    String authToken;
+    private int gameId;
+    private String authToken;
+
     public WebSocketService(AuthDAO authDataAccess, GameDAO gameDataAccess){
         this.authDataAccess = authDataAccess;
         this. gameDataAccess = gameDataAccess;
