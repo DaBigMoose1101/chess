@@ -2,6 +2,7 @@ package handler;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -76,10 +77,11 @@ public class WebSocketHandler {
                     user = service.getUser();
                     ChessMove move = ((MakeMoveCommand)com).getMove();
                     if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-                        NotificationMessage note = new NotificationMessage(user + " made move ");
+                        NotificationMessage note = new NotificationMessage(user + parseMove(move));
                         notifyConnections(serverMessage, session, gameId);
                         notifyConnections(note, session, gameId);
                         sendMessage(session, serverMessage);
+                        sendMessage(session, new NotificationMessage("You" + parseMove(move)));
                     }
                     else{
                         sendMessage(session, serverMessage);
@@ -112,4 +114,35 @@ public class WebSocketHandler {
             }
         }
     }
+
+    private String parseMove(ChessMove move){
+        String res = " moved ";
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        res += start.getRow() + convert(start.getColumn()) + " to " + end.getRow() + convert(end.getColumn());
+        return res;
+    }
+
+    private String convert(int i) {
+        switch (i) {
+            case 1:
+                return "a";
+            case 2:
+                return "b";
+            case 3:
+                return "c";
+            case 4:
+                return "d";
+            case 5:
+                return "e";
+            case 6:
+                return "f";
+            case 7:
+                return "g";
+            case 8:
+                return "h";
+        }
+        return "err";
+    }
+
 }
