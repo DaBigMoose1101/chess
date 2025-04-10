@@ -263,12 +263,11 @@ public class Client implements WebSocketObserver {
             System.out.println("Invalid position");
         }
         printGamePlayMenu();
-
-
     }
 
     private void leaveGame(){
-
+        serverFacade.leave(authToken, gameID);
+        inGame = false;
     }
 
     private void resign(){
@@ -398,7 +397,6 @@ public class Client implements WebSocketObserver {
                 break;
             case 4:
                 leaveGame();
-                inGame = false;
                 break;
             case 5:
                 resign();
@@ -414,7 +412,7 @@ public class Client implements WebSocketObserver {
         int flag = getFlag();
         switch (flag){
             case 1:
-                artist.drawBoard(game, color);
+                drawBoard();
                 break;
             case 2:
                 leaveGame();
