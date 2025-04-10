@@ -4,6 +4,7 @@ package ui;
 import chess.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -111,7 +112,8 @@ public class Artist {
     }
 
     public Artist(){
-        out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        this.out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        this.moves = new ArrayList<>();
     }
 
     public void drawBoard(ChessGame game, ChessGame.TeamColor playerColor){

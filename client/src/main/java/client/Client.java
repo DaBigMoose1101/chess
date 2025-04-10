@@ -256,7 +256,13 @@ public class Client implements WebSocketObserver {
                     new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))), toInt(input.charAt(1)));
             Collection<ChessMove> highlighted = game.validMoves(pos);
             artist.setMoves(highlighted);
+            drawBoard();
+            artist.setMoves(new ArrayList<>());
         }
+        else{
+            System.out.println("Invalid position");
+        }
+        printGamePlayMenu();
 
 
     }
