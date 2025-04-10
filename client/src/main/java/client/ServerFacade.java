@@ -1,19 +1,59 @@
 package client;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import records.*;
 import chess.ChessGame;
 import com.google.gson.Gson;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 
 
 public class ServerFacade {
     private final String serverURL;
+    private final WebSocketFacade socket;
 
     private ClientCommunicator getCommunicator(String path, String method){
         return new ClientCommunicator(serverURL + path, method);
     }
 
-    public ServerFacade(String serverURL){
+    public ServerFacade(String serverURL, WebSocketObserver observer){
         this.serverURL = serverURL;
+        try {
+            this.socket = new WebSocketFacade(serverURL, observer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void send(UserGameCommand com){
+        try {
+            socket.send(new Gson().toJson(com));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    public void connect(String authToken, Integer gameID) {
+        UserGameCommand com = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        send(com);
+    }
+
+    public void makeMove(String authToken, Integer gameID, ChessMove move){
+        MakeMoveCommand com = new MakeMoveCommand(authToken, gameID, move);
+        send(com);
+    }
+
+    public void leave(String authToken, Integer gameID){
+        UserGameCommand com = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        send(com);
+    }
+
+    public void resign(String authToken, Integer gameID){
+        UserGameCommand com = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        send(com);
     }
 
     public Object register(String username, String password, String email){
@@ -56,8 +96,6 @@ public class ServerFacade {
 
     public Object logout(String authToken){
         String path = "/session";
-        Gson serializer = new Gson();
-        LogoutRequest req = new LogoutRequest(authToken);
         ClientCommunicator comm = getCommunicator(path, "DELETE");
         String responseString;
         try{
@@ -93,8 +131,6 @@ public class ServerFacade {
 
     public Object getGameList(String authToken){
         String path = "/game";
-        Gson serializer = new Gson();
-        GamesListRequest req = new GamesListRequest(authToken);
         ClientCommunicator comm = getCommunicator(path, "GET");
         String responseString;
         try{
@@ -125,7 +161,8 @@ public class ServerFacade {
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
         } else {
-            return new Gson().fromJson(responseString, JoinGameResponse.class);
+            connect(authToken, gameId);
+            return serializer.fromJson(responseString, JoinGameResponse.class);
         }
     }
 
@@ -146,6 +183,5 @@ public class ServerFacade {
         } else {
             return new Gson().fromJson(responseString, ClearResponse.class);
         }
-
     }
 }

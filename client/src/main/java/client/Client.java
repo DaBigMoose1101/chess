@@ -304,7 +304,7 @@ public class Client implements WebSocketObserver {
     public Client(){
         authorized = false;
         artist = new Artist();
-        serverFacade = new ServerFacade("http://localhost:8080");
+        serverFacade = new ServerFacade("http://localhost:8080", this);
         board = new ChessBoard();
         board.resetBoard();
         gameList = new HashMap<>();
@@ -314,7 +314,7 @@ public class Client implements WebSocketObserver {
         String p = Integer.toString(port);
         authorized = false;
         artist = new Artist();
-        serverFacade = new ServerFacade("http://localhost:" + p);
+        serverFacade = new ServerFacade("http://localhost:" + p, this);
         board = new ChessBoard();
         board.resetBoard();
     }

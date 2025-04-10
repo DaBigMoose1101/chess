@@ -31,7 +31,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     void initializeSeverFacade(){
-        facade = new ServerFacade(url);
+        facade = new ServerFacade(url, new Client());
         facade.deleteDB();
     }
 
