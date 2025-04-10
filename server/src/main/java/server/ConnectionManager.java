@@ -1,6 +1,7 @@
 package server;
 
-import spark.Session;
+
+import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.ArrayList;
 import java.util.HashMap;
