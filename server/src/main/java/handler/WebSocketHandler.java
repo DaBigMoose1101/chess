@@ -20,6 +20,7 @@ import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@WebSocket
 public class WebSocketHandler {
     static AuthDAO authDataAccess;
     static GameDAO gameDataAccess;

@@ -1,5 +1,8 @@
 package client;
 
+import com.google.gson.Gson;
+import websocket.messages.ServerMessage;
+
 import javax.websocket.*;
 import java.net.URI;
 
@@ -16,7 +19,8 @@ public class WebSocketFacade extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
-                observer.notify();
+                ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                observer.notify(serverMessage);
             }
         });
     }
@@ -27,4 +31,6 @@ public class WebSocketFacade extends Endpoint {
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+
+
 }

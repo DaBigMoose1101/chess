@@ -6,6 +6,7 @@ import handler.DatabaseAdminHandler;
 import handler.GameHandler;
 import handler.UserHandler;
 import handler.WebSocketHandler;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import spark.*;
 
 public class Server {
@@ -81,4 +82,5 @@ public class Server {
         DatabaseAdminHandler handler = new DatabaseAdminHandler(authDataAccess, userDataAccess, gameDataAccess, res);
         return handler.deleteDB();
     }
+
 }
