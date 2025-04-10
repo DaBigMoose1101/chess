@@ -161,7 +161,6 @@ public class ServerFacade {
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
         } else {
-            connect(authToken, gameId);
             return serializer.fromJson(responseString, JoinGameResponse.class);
         }
     }

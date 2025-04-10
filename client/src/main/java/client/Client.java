@@ -1,15 +1,18 @@
 package client;
 
+import chess.ChessMove;
 import records.*;
 import chess.ChessGame;
 import model.GameData;
 import ui.Artist;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.List;
-import java.util.Vector;
 
+import java.util.*;
+
+import static java.lang.System.exit;
 
 
 public class Client implements WebSocketObserver {
@@ -20,6 +23,8 @@ public class Client implements WebSocketObserver {
     private final Artist artist;
     final private ServerFacade serverFacade;
     private HashMap<Integer, GameData> gameList;
+    private boolean isPlayer;
+    private boolean inGame;
 
     private void register(){
         Scanner s = new Scanner(System.in);
@@ -115,19 +120,22 @@ public class Client implements WebSocketObserver {
         }
     }
 
-    private boolean joinGame(){
+    private int chooseGame(){
         Scanner s = new Scanner(System.in);
         System.out.println("Enter Game ID: ");
         int iD;
-        int gameID = 0;
         try {
             iD = s.nextInt();
-            gameID = gameList.get(iD).gameID();
+           return gameList.get(iD).gameID();
         } catch (Exception e) {
             handleInvalid();
-            return false;
         }
-        System.out.println("Choose color: 1.White 2.Black");
+        return 0;
+    }
+
+    private void joinGame(){
+        int gameID = chooseGame();
+        System.out.println("Choose color: 1.White 2.Black\n");
         ChessGame.TeamColor chosenColor;
         while(true) {
             int flag = getFlag();
@@ -140,46 +148,38 @@ public class Client implements WebSocketObserver {
             }
             else {
               handleInvalid();
-              return false;
             }
         }
+
         Object response = serverFacade.joinGame(authToken, chosenColor, gameID);
         if(response instanceof JoinGameResponse){
             color = chosenColor;
-            return true;
+            isPlayer = true;
+            serverFacade.connect(authToken, gameID);
         }
         else{
             System.out.println(((ErrorResponse)response).message());
-            return false;
         }
     }
 
     private void observeGame(){
-        Scanner s = new Scanner(System.in);
-        int gameID = 0;
-        int iD = getFlag();
-        try{
-            gameID = gameList.get(iD).gameID();
-        }
-        catch (Exception e){
-            handleInvalid();
-            return;
-        }
-        artist.drawBoard(game, ChessGame.TeamColor.WHITE);
-        System.out.println("1. exit game");
-        int flag = getFlag();
-        if(flag == 1){
-            return;
-        }
-        else{
-            handleInvalid();
-            observeGame();
-        }
-
-
+        int gameId = chooseGame();
+        serverFacade.connect(authToken, gameId);
     }
 
     private void makeMove(){
+        ArrayList<ChessMove> valid = game.validMoves()
+    }
+
+    private void highlight(){
+
+    }
+
+    private void leaveGame(){
+
+    }
+
+    private void resign(){
 
     }
 
@@ -213,7 +213,7 @@ public class Client implements WebSocketObserver {
                 help();
             }
             else if(flag == 4){
-                return;
+                exit(0);
             }
             else{
                 handleInvalid();
@@ -226,59 +226,35 @@ public class Client implements WebSocketObserver {
 
     private void postLoginLoop(){
         Vector<String> menu = new Vector<String>(List.of("1: Create Game",
-                "2: List Games", "3: Play game", "4: ObserveGame", "5: Logout", "6: Help"));
-        while(true){
+                "2: List Games", "3: Join game", "4: ObserveGame", "5: Logout", "6: Help"));
+        while(authorized) {
             printMenu(menu);
             int flag = getFlag();
-            if(flag == 1){
+            if (flag == 1) {
                 createGame();
-            }
-            else if(flag == 2){
+            } else if (flag == 2) {
                 getGameList();
-            }
-            else if(flag == 3){
-                if(joinGame()) {
-                    PlayerLoop();
-                }
-            }
-            else if(flag == 4){
+            } else if (flag == 3) {
+                joinGame();
+                inGame = true;
+                inGameLoop();
+            } else if (flag == 4) {
                 observeGame();
-            }
-            else if(flag == 5){
+                inGame = true;
+                inGameLoop();
+            } else if (flag == 5) {
                 logout();
-                return;
-            }
-            else if(flag == 6){
+            } else if (flag == 6) {
                 help();
-            }
-            else{
+            } else {
                 handleInvalid();
+                postLoginLoop();
             }
-
         }
     }
 
-    private void PlayerLoop(){
-        String menu = "1: Make Move  2: ExitGame  3:Help \n";
-        while(true){
-            System.out.println("\033[H\033[2J");
-            System.out.flush();
-            artist.drawBoard(game, color);
-            System.out.println(menu);
-            int flag = getFlag();
-            if(flag == 1){
-                    //make move
-            }
-            else if(flag == 2){
-                return;
-            }
-            else if(flag == 3){
-                help();
-            }
-            else{
-                handleInvalid();
-            }
-
+    private void inGameLoop(){
+        while(inGame){
 
         }
     }
@@ -304,6 +280,61 @@ public class Client implements WebSocketObserver {
         artist.drawBoard(game, color);
     }
 
+    private void printMenu(){
+        if(isPlayer){
+            System.out.println("1: Make Move  2: Redraw Board 3: Highlight Moves " +
+                    "4: Exit Game 5: resign  6:Help \n");
+            handlePlayerInput();
+        }
+        else{
+            System.out.println("1: Redraw Board 2: Exit Game 3: Help\n");
+            handleObserverInput();
+        }
+    }
+
+    private void handlePlayerInput(){
+        int flag = getFlag();
+        switch (flag){
+            case 1:
+                makeMove();
+                break;
+            case 2:
+                artist.drawBoard(game, color);
+                break;
+            case 3:
+                highlight();
+                break;
+            case 4:
+                leaveGame();
+                inGame = false;
+                break;
+            case 5:
+                resign();
+                break;
+            case 6:
+                help();
+                break;
+        }
+
+    }
+
+    private void handleObserverInput(){
+        int flag = getFlag();
+        switch (flag){
+            case 1:
+                artist.drawBoard(game, color);
+                break;
+            case 2:
+                leaveGame();
+                inGame = false;
+                break;
+            case 3:
+                help();
+                break;
+        }
+
+    }
+
     public Client(){
         authorized = false;
         artist = new Artist();
@@ -326,12 +357,20 @@ public class Client implements WebSocketObserver {
     }
 
     public void notify(ServerMessage message){
+
         switch(message.getServerMessageType()){
             case LOAD_GAME:
+                game = ((LoadGameMessage) message).getGame().game();
+                drawBoard();
+                printMenu();
                 break;
             case NOTIFICATION:
+                System.out.println(((NotificationMessage) message).getMessage());
+                printMenu();
                 break;
             case ERROR:
+                System.out.println(((ErrorMessage)message).getErrorMessage());
+                printMenu();
                 break;
         }
 
