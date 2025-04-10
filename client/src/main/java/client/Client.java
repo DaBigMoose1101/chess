@@ -1,7 +1,6 @@
 package client;
 
 import records.*;
-import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import ui.Artist;
@@ -16,7 +15,7 @@ import java.util.Vector;
 public class Client implements WebSocketObserver {
     private Boolean authorized;
     private String authToken;
-    private ChessBoard board;
+    private ChessGame game;
     private ChessGame.TeamColor color;
     private final Artist artist;
     final private ServerFacade serverFacade;
@@ -166,7 +165,7 @@ public class Client implements WebSocketObserver {
             handleInvalid();
             return;
         }
-        artist.drawBoard(board, ChessGame.TeamColor.WHITE);
+        artist.drawBoard(game, ChessGame.TeamColor.WHITE);
         System.out.println("1. exit game");
         int flag = getFlag();
         if(flag == 1){
@@ -239,7 +238,7 @@ public class Client implements WebSocketObserver {
             }
             else if(flag == 3){
                 if(joinGame()) {
-                    inGameLoop(true);
+                    PlayerLoop();
                 }
             }
             else if(flag == 4){
@@ -259,28 +258,27 @@ public class Client implements WebSocketObserver {
         }
     }
 
-    private void inGameLoop(Boolean isPlayer){
-        String menu = "1: Make Move  2: ExitGame  3:Help";
+    private void PlayerLoop(){
+        String menu = "1: Make Move  2: ExitGame  3:Help \n";
         while(true){
             System.out.println("\033[H\033[2J");
             System.out.flush();
-            artist.drawBoard(board, color);
-            if(isPlayer) {
-                System.out.println(menu);
-                int flag = getFlag();
-                if(flag == 1){
+            artist.drawBoard(game, color);
+            System.out.println(menu);
+            int flag = getFlag();
+            if(flag == 1){
                     //make move
-                }
-                else if(flag == 2){
-                    return;
-                }
-                else if(flag == 3){
-                    help();
-                }
-                else{
-                    handleInvalid();
-                }
             }
+            else if(flag == 2){
+                return;
+            }
+            else if(flag == 3){
+                help();
+            }
+            else{
+                handleInvalid();
+            }
+
 
         }
     }
@@ -301,12 +299,15 @@ public class Client implements WebSocketObserver {
             return 0;
         }
     }
+
+    private void drawBoard(){
+        artist.drawBoard(game, color);
+    }
+
     public Client(){
         authorized = false;
         artist = new Artist();
         serverFacade = new ServerFacade("http://localhost:8080", this);
-        board = new ChessBoard();
-        board.resetBoard();
         gameList = new HashMap<>();
     }
 
@@ -315,8 +316,6 @@ public class Client implements WebSocketObserver {
         authorized = false;
         artist = new Artist();
         serverFacade = new ServerFacade("http://localhost:" + p, this);
-        board = new ChessBoard();
-        board.resetBoard();
     }
 
     public void startLoop(){
@@ -327,6 +326,14 @@ public class Client implements WebSocketObserver {
     }
 
     public void notify(ServerMessage message){
+        switch(message.getServerMessageType()){
+            case LOAD_GAME:
+                break;
+            case NOTIFICATION:
+                break;
+            case ERROR:
+                break;
+        }
 
     }
 

@@ -98,7 +98,8 @@ public class Artist {
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
-    public void drawBoard(chess.ChessBoard board, ChessGame.TeamColor playerColor){
+    public void drawBoard(ChessGame game, ChessGame.TeamColor playerColor){
+        ChessBoard board = game.getBoard();
         Vector<Integer> printOrderRow;
         Vector<Integer> printOrderCol;
         Vector<String> printOrderChars;
