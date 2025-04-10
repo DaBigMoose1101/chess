@@ -89,6 +89,10 @@ public class WebSocketHandler {
                     break;
                 case RESIGN:
                     serverMessage = service.resign(session, com);
+                    if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
+                        notifyConnections(serverMessage, session, gameId);
+                        sendMessage(session, serverMessage);
+                    }
                     break;
                 default:
                     serverMessage = new ErrorMessage("Error: Invalid request");
