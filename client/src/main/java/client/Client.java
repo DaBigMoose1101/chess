@@ -1,6 +1,8 @@
 package client;
 
 import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import records.*;
 import chess.ChessGame;
 import model.GameData;
@@ -25,6 +27,7 @@ public class Client implements WebSocketObserver {
     private HashMap<Integer, GameData> gameList;
     private boolean isPlayer;
     private boolean inGame;
+    private int gameID;
 
     private void register(){
         Scanner s = new Scanner(System.in);
@@ -134,7 +137,7 @@ public class Client implements WebSocketObserver {
     }
 
     private void joinGame(){
-        int gameID = chooseGame();
+        gameID = chooseGame();
         System.out.println("Choose color: 1.White 2.Black\n");
         ChessGame.TeamColor chosenColor;
         while(true) {
@@ -163,15 +166,97 @@ public class Client implements WebSocketObserver {
     }
 
     private void observeGame(){
-        int gameId = chooseGame();
-        serverFacade.connect(authToken, gameId);
+        gameID = chooseGame();
+        serverFacade.connect(authToken, gameID);
+    }
+
+    private int toInt(char c){
+        return switch(c){
+            case 'a' -> 1;
+            case 'b' -> 2;
+            case 'c' -> 3;
+            case 'd' -> 4;
+            case 'e' -> 5;
+            case 'f' -> 6;
+            case 'g' -> 7;
+            case 'h' -> 8;
+            default -> 0;
+        };
+    }
+
+
+    private boolean isValidInput(String input){
+        return input.matches("[1-8][a-h][1-8][a-h]");
+    }
+
+    private boolean canPromote(ChessPosition start, ChessPosition end){
+        ChessPiece p = game.getBoard().getPiece(start);
+        if(p != null && p.getPieceType() == ChessPiece.PieceType.PAWN){
+            return end.getRow() == 1 || end.getRow() == 8;
+        }
+        return false;
+    }
+
+    private ChessPiece.PieceType getPromotion(){
+        while(true) {
+            System.out.println("1: Queen 2: Bishop 3: Knight 4: Rook");
+            int flag = getFlag();
+            if(flag == 1){
+                return ChessPiece.PieceType.QUEEN;
+            }
+            else if(flag == 2){
+                return ChessPiece.PieceType.BISHOP;
+            }
+            else if(flag == 3){
+                return ChessPiece.PieceType.KNIGHT;
+            }
+            else if(flag == 4){
+                return ChessPiece.PieceType.ROOK;
+            }
+        }
+
     }
 
     private void makeMove(){
-        ArrayList<ChessMove> valid = game.validMoves()
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter a move by typing the starting position " +
+                "and ending position without spaces. (i.e. 2a3a");
+        System.out.println("Enter move: ");
+        String input = s.nextLine();
+        ChessPosition start;
+        ChessPosition end;
+        ChessPiece.PieceType promotion = null;
+        if(isValidInput(input)){
+            start = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))),
+                    toInt(input.charAt(1)));
+            end = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(2))),
+                    toInt(input.charAt(3)));
+            if(canPromote(start, end)){
+                promotion = getPromotion();
+            }
+            Collection<ChessMove> valid = game.validMoves(start);
+            ChessMove move = new ChessMove(start, end, promotion);
+            if(valid.contains(move)){
+                serverFacade.makeMove(authToken, gameID, move);
+            }
+        }
+        else{
+            System.out.println("Invalid move");
+            printGamePlayMenu();
+        }
+
     }
 
     private void highlight(){
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter a Starting Position (i.e. 1a): ");
+        String input = s.nextLine();
+        if(input.matches("[1-8][a-h]")){
+            ChessPosition pos =
+                    new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))), toInt(input.charAt(1)));
+            Collection<ChessMove> highlighted = game.validMoves(pos);
+        }
+
 
     }
 
@@ -280,7 +365,7 @@ public class Client implements WebSocketObserver {
         artist.drawBoard(game, color);
     }
 
-    private void printMenu(){
+    private void printGamePlayMenu(){
         if(isPlayer){
             System.out.println("1: Make Move  2: Redraw Board 3: Highlight Moves " +
                     "4: Exit Game 5: resign  6:Help \n");
@@ -362,15 +447,15 @@ public class Client implements WebSocketObserver {
             case LOAD_GAME:
                 game = ((LoadGameMessage) message).getGame().game();
                 drawBoard();
-                printMenu();
+                printGamePlayMenu();
                 break;
             case NOTIFICATION:
                 System.out.println(((NotificationMessage) message).getMessage());
-                printMenu();
+                printGamePlayMenu();
                 break;
             case ERROR:
                 System.out.println(((ErrorMessage)message).getErrorMessage());
-                printMenu();
+                printGamePlayMenu();
                 break;
         }
 
