@@ -134,6 +134,9 @@ public class GameDatabaseDAO implements GameDAO{
                         if(username.matches("[a-zA-Z1-9]+")){
                             statement.setString(1, username);
                         }
+                        if(username.isEmpty()){
+                            statement.setString( 1, null);
+                        }
                         statement.setInt(2, game.gameID());
                         statement.executeUpdate();
                     }
@@ -143,6 +146,9 @@ public class GameDatabaseDAO implements GameDAO{
                     try(var statement = conn.prepareStatement(updateStatementW)){
                         if(username.matches("[a-zA-Z1-9]+")){
                             statement.setString(1, username);
+                        }
+                        if(username.isEmpty()){
+                            statement.setString( 1, null);
                         }
                         statement.setInt(2, game.gameID());
                         statement.executeUpdate();

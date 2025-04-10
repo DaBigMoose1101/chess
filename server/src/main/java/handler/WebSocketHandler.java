@@ -1,11 +1,9 @@
 package handler;
 
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.*;
@@ -66,10 +64,12 @@ public class WebSocketHandler {
                     break;
                 case LEAVE:
                     serverMessage = service.leave(session, com);
-                    user = service.getUser();
                     if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
-                        NotificationMessage note = new NotificationMessage(user +" left the game.");
-                        notifyConnections(note, session, gameId);
+                        connections.removeSession(gameId, session);
+                        notifyConnections(serverMessage, session, gameId);
+                    }
+                    else{
+                        sendMessage(session, serverMessage);
                     }
                     break;
                 case MAKE_MOVE:
@@ -91,6 +91,9 @@ public class WebSocketHandler {
                     serverMessage = service.resign(session, com);
                     if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
                         notifyConnections(serverMessage, session, gameId);
+                        sendMessage(session, serverMessage);
+                    }
+                    else{
                         sendMessage(session, serverMessage);
                     }
                     break;

@@ -12,9 +12,11 @@ import java.util.Collection;
 public class ChessGame {
     TeamColor turn;
     ChessBoard board;
+    Boolean gameOver;
     public ChessGame() {
         this.board = new ChessBoard();
         this.turn = TeamColor.WHITE;
+        this.gameOver = false;
         board.resetBoard();
     }
 
@@ -89,7 +91,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
         if(board.getPiece(move.getStartPosition()) != null && valid.contains(move)
-                && turn == board.getPiece(move.getStartPosition()).getTeamColor()) {
+                && turn == board.getPiece(move.getStartPosition()).getTeamColor() && !gameOver) {
                 board.makeMove(move);
                 changeTurn();
         }
@@ -157,6 +159,7 @@ public class ChessGame {
                     }
                 }
             }
+            gameOver = true;
             return true;
         }
         return false;
@@ -203,6 +206,13 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public boolean isGameOver(){
+        return gameOver;
+    }
+    public void resign(){
+        gameOver = true;
     }
 
 }
