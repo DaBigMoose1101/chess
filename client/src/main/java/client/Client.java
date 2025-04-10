@@ -32,16 +32,16 @@ public class Client implements WebSocketObserver {
     private void register(){
         Scanner s = new Scanner(System.in);
         while(!authorized) {
-            System.out.println("Return to menu by leaving all fields blank");
+            System.out.println("Return to menu by leaving all fields blank\n");
 
             String username;
             String password;
             String email;
             System.out.println("Enter Username: ");
             username = s.nextLine();
-            System.out.println("Enter Password");
+            System.out.println("Enter Password: ");
             password = s.nextLine();
-            System.out.println("Enter email");
+            System.out.println("Enter email: ");
             email = s.nextLine();
             if(email.isEmpty() && password.isEmpty() && username.isEmpty()){
                 return;
@@ -60,12 +60,12 @@ public class Client implements WebSocketObserver {
     private void login(){
         Scanner s = new Scanner(System.in);
         while(!authorized){
-            System.out.println("Return to menu by leaving all fields blank");
+            System.out.println("Return to menu by leaving all fields blank\n");
             String username;
             String password;
             System.out.println("Enter Username: ");
             username = s.nextLine();
-            System.out.println("Enter Password");
+            System.out.println("Enter Password: ");
             password = s.nextLine();
 
             if(password.isEmpty() && username.isEmpty()){
@@ -119,7 +119,7 @@ public class Client implements WebSocketObserver {
                 gameList.put(i, game);
                 i++;
             }
-            System.out.println("No games exist. Please create one.");
+            System.out.println("No games exist. Please create one.\n");
         }
     }
 
@@ -199,7 +199,7 @@ public class Client implements WebSocketObserver {
 
     private ChessPiece.PieceType getPromotion(){
         while(true) {
-            System.out.println("1: Queen 2: Bishop 3: Knight 4: Rook");
+            System.out.println("1: Queen 2: Bishop 3: Knight 4: Rook\n");
             int flag = getFlag();
             if(flag == 1){
                 return ChessPiece.PieceType.QUEEN;
@@ -220,7 +220,7 @@ public class Client implements WebSocketObserver {
     private void makeMove(){
         Scanner s = new Scanner(System.in);
         System.out.println("Enter a move by typing the starting position " +
-                "and ending position without spaces. (i.e. 2a3a");
+                "and ending position without spaces. (i.e. 2a3a\n");
         System.out.println("Enter move: ");
         String input = s.nextLine();
         ChessPosition start;
@@ -241,7 +241,7 @@ public class Client implements WebSocketObserver {
             }
         }
         else{
-            System.out.println("Invalid move");
+            System.out.println("Invalid move\n");
             printGamePlayMenu();
         }
 
@@ -260,7 +260,7 @@ public class Client implements WebSocketObserver {
             artist.setMoves(new ArrayList<>());
         }
         else{
-            System.out.println("Invalid position");
+            System.out.println("Invalid position\n");
         }
         printGamePlayMenu();
     }
@@ -271,11 +271,12 @@ public class Client implements WebSocketObserver {
     }
 
     private void resign(){
-
+        serverFacade.resign(authToken, gameID);
+        printGamePlayMenu();
     }
 
     private void help(){
-        System.out.println("Select from the given menu by typing a number corresponding with the given menu item");
+        System.out.println("Select from the given menu by typing a number corresponding with the given menu item\n");
     }
 
     private void authorizeUser(String authT){
@@ -351,7 +352,7 @@ public class Client implements WebSocketObserver {
     }
 
     private void handleInvalid(){
-        System.out.println("Invalid choice try again");
+        System.out.println("Invalid choice try again\n");
     }
 
     private int getFlag(){
@@ -387,19 +388,25 @@ public class Client implements WebSocketObserver {
         int flag = getFlag();
         switch (flag){
             case 1:
-                makeMove();
+                if(!game.isGameOver()) {
+                    makeMove();
+                }
                 break;
             case 2:
                 artist.drawBoard(game, color);
                 break;
             case 3:
-                highlight();
+                if(!game.isGameOver()) {
+                    highlight();
+                }
                 break;
             case 4:
                 leaveGame();
                 break;
             case 5:
-                resign();
+                if(!game.isGameOver()) {
+                    resign();
+                }
                 break;
             case 6:
                 help();
@@ -416,7 +423,6 @@ public class Client implements WebSocketObserver {
                 break;
             case 2:
                 leaveGame();
-                inGame = false;
                 break;
             case 3:
                 help();

@@ -51,7 +51,7 @@ public class WebSocketService {
         try {
             getInfo(com);
             if(game.blackUsername().equals(user)){
-            gameDataAccess.updateGameColor(game,"", ChessGame.TeamColor.BLACK);
+                gameDataAccess.updateGameColor(game,"", ChessGame.TeamColor.BLACK);
             }
             else if(game.whiteUsername().equals(user)){
                 gameDataAccess.updateGameColor(game,"", ChessGame.TeamColor.WHITE);
