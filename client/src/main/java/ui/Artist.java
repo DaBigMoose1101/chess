@@ -4,6 +4,7 @@ package ui;
 import chess.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 import java.io.PrintStream;
@@ -11,6 +12,8 @@ import static ui.EscapeSequences.*;
 
 public class Artist {
     final private PrintStream out;
+    private Collection<ChessMove> moves;
+
 
     private void drawHeaderFooter(Vector<String> labels){
         out.print(SET_BG_COLOR_WHITE);
@@ -25,6 +28,14 @@ public class Artist {
         out.println();
     }
 
+    private void checkHighlight(ChessPosition pos){
+        for(ChessMove move : moves){
+            if(pos == move.getEndPosition()){
+                setSquareBlue();
+            }
+        }
+    }
+
     private void drawRow(ChessBoard board, Vector<Integer> printOrderCol, int index, String currentColor){
         String label = String.valueOf(index);
         margin(" "+label);
@@ -33,6 +44,7 @@ public class Artist {
         if(currentColor.equals("dark")) {setSquareDark();}
         for(int num : printOrderCol){
             ChessPosition pos = new ChessPosition(index, num);
+            checkHighlight(pos);
             ch = getIcon(board.getPiece(pos), " ");
             setIconColor(board.getPiece(pos));
             drawSquare(ch);
@@ -81,6 +93,10 @@ public class Artist {
 
     private void setSquareDark(){
         out.print(SET_BG_COLOR_DARK_GREY);
+    }
+
+    private void setSquareBlue(){
+        out.print(SET_BG_COLOR_BLUE);
     }
 
     private String changeSquareColor(String current){
@@ -134,6 +150,10 @@ public class Artist {
     public void clear(){
         out.print(ERASE_SCREEN);
         out.println();
+    }
+
+    public void setMoves(Collection<ChessMove> m){
+        this.moves = m;
     }
 
 }
