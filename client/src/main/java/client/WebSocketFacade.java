@@ -19,8 +19,7 @@ public class WebSocketFacade extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
-                ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                observer.notify(serverMessage);
+                observer.notify(message);
             }
         });
     }
@@ -30,11 +29,6 @@ public class WebSocketFacade extends Endpoint {
     }
     @OnOpen
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-        System.out.println("Connected");
-    }
-    @OnClose
-    public void onClose(){
-        System.out.println("Disconnected");
     }
 
 

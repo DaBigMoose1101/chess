@@ -3,6 +3,7 @@ package client;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import records.*;
 import chess.ChessGame;
 import model.GameData;
@@ -455,19 +456,22 @@ public class Client implements WebSocketObserver {
         System.out.println("Goodbye!");
     }
 
-    public void notify(ServerMessage message){
-
+    public void notify(String serverMessage){
+        ServerMessage message = new Gson().fromJson(serverMessage, ServerMessage.class);
         switch(message.getServerMessageType()){
             case LOAD_GAME:
-                game = ((LoadGameMessage) message).getGame().game();
+                LoadGameMessage g = new Gson().fromJson(serverMessage, LoadGameMessage.class);
+                game = g.getGame().game();
                 drawBoard();
                 printGamePlayMenu();
                 break;
             case NOTIFICATION:
+                NotificationMessage n = new Gson().fromJson(serverMessage, NotificationMessage.class);
                 System.out.println(((NotificationMessage) message).getMessage());
                 printGamePlayMenu();
                 break;
             case ERROR:
+                ErrorMessage e = new Gson().fromJson(serverMessage, ErrorMessage.class);
                 System.out.println(((ErrorMessage)message).getErrorMessage());
                 printGamePlayMenu();
                 break;

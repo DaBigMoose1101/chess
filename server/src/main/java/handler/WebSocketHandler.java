@@ -25,7 +25,7 @@ public class WebSocketHandler {
     static AuthDAO authDataAccess;
     static GameDAO gameDataAccess;
     static ConnectionManager connections = new ConnectionManager();
-    static Gson serializer = new Gson();
+    private Gson serializer = new Gson();
 
     public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
@@ -99,8 +99,8 @@ public class WebSocketHandler {
                     break;
                 default:
                     serverMessage = new ErrorMessage("Error: Invalid request");
+                    sendMessage(session, serverMessage);
             }
-            sendMessage(session, serverMessage);
         }
         catch (IOException e) {
             throw new RuntimeException(e.getMessage());
@@ -118,12 +118,12 @@ public class WebSocketHandler {
         System.out.println("Connection closed: " + reason);
     }
 
-    public static void sendMessage(Session session, ServerMessage message) throws IOException {
+    private void sendMessage(Session session, ServerMessage message) throws IOException {
         String response = serializer.toJson(message);
         session.getRemote().sendString(response);
     }
 
-    public static void notifyConnections(ServerMessage message,
+  private void notifyConnections(ServerMessage message,
                                   Session session, int gameId) throws IOException {
         ArrayList<Session> sessions = connections.getSessions(gameId);
         for (Session ses : sessions){
@@ -133,7 +133,7 @@ public class WebSocketHandler {
         }
     }
 
-    public static String parseMove(ChessMove move){
+    private String parseMove(ChessMove move){
         String res = " moved ";
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
@@ -141,7 +141,7 @@ public class WebSocketHandler {
         return res;
     }
 
-    public static String convert(int i) {
+    private String convert(int i) {
         return switch (i) {
             case 1 -> "a";
             case 2 -> "b";
