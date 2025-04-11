@@ -15,6 +15,9 @@ public class ConnectionManager {
 
     public void addConnection(int gameId, Session session){
         ArrayList<Session> sessions = getSessions(gameId);
+        if(sessions == null){
+            sessions = new ArrayList<>();
+        }
         sessions.add(session);
         connections.put(gameId, sessions);
     }
