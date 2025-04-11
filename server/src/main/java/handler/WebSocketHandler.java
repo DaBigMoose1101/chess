@@ -25,13 +25,12 @@ public class WebSocketHandler {
     static AuthDAO authDataAccess;
     static GameDAO gameDataAccess;
     static ConnectionManager connections = new ConnectionManager();
-    private final Gson serializer = new Gson();
+    static Gson serializer = new Gson();
 
     public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
         gameDataAccess = game;
     }
-
     @OnWebSocketMessage
     public void onMessage(Session session, String message){
         WebSocketService service = new WebSocketService(authDataAccess, gameDataAccess);
@@ -108,12 +107,23 @@ public class WebSocketHandler {
         }
     }
 
-    private void sendMessage(Session session, ServerMessage message) throws IOException {
+    @OnWebSocketConnect
+     public void onConnect(Session session) {
+        // Handle new WebSocket connections
+        System.out.println("Client connected: " + session.getRemoteAddress());
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session session, int statusCode, String reason) {
+        System.out.println("Connection closed: " + reason);
+    }
+
+    public static void sendMessage(Session session, ServerMessage message) throws IOException {
         String response = serializer.toJson(message);
         session.getRemote().sendString(response);
     }
 
-    private void notifyConnections(ServerMessage message,
+    public static void notifyConnections(ServerMessage message,
                                   Session session, int gameId) throws IOException {
         ArrayList<Session> sessions = connections.getSessions(gameId);
         for (Session ses : sessions){
@@ -123,7 +133,7 @@ public class WebSocketHandler {
         }
     }
 
-    private String parseMove(ChessMove move){
+    public static String parseMove(ChessMove move){
         String res = " moved ";
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
@@ -131,7 +141,7 @@ public class WebSocketHandler {
         return res;
     }
 
-    private String convert(int i) {
+    public static String convert(int i) {
         return switch (i) {
             case 1 -> "a";
             case 2 -> "b";

@@ -28,8 +28,13 @@ public class WebSocketFacade extends Endpoint {
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }
-
+    @OnOpen
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+        System.out.println("Connected");
+    }
+    @OnClose
+    public void onClose(){
+        System.out.println("Disconnected");
     }
 
 

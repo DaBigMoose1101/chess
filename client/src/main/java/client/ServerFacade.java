@@ -1,7 +1,6 @@
 package client;
 
 import chess.ChessMove;
-import chess.ChessPosition;
 import records.*;
 import chess.ChessGame;
 import com.google.gson.Gson;

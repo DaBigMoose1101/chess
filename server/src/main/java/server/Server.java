@@ -6,7 +6,9 @@ import handler.DatabaseAdminHandler;
 import handler.GameHandler;
 import handler.UserHandler;
 import handler.WebSocketHandler;
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.*;
 
 public class Server {

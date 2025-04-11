@@ -119,7 +119,9 @@ public class Client implements WebSocketObserver {
                 gameList.put(i, game);
                 i++;
             }
-            System.out.println("No games exist. Please create one.\n");
+            if(games.isEmpty()){
+                System.out.println("No Games exist please Create one.");
+            }
         }
     }
 
@@ -320,6 +322,7 @@ public class Client implements WebSocketObserver {
         Vector<String> menu = new Vector<String>(List.of("1: Create Game",
                 "2: List Games", "3: Join game", "4: ObserveGame", "5: Logout", "6: Help"));
         while(authorized) {
+            System.out.println("\n Main Menu");
             printMenu(menu);
             int flag = getFlag();
             if (flag == 1) {
