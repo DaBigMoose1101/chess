@@ -67,6 +67,7 @@ public class WebSocketService {
             getInfo(com);
             ChessGame chess = game.game();
             chess.makeMove(com.getMove());
+            gameDataAccess.updateGame(game);
             return new LoadGameMessage(game, gameId);
         } catch (DataAccessException e) {
             return new ErrorMessage(handleError(e).message());

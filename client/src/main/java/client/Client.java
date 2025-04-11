@@ -141,7 +141,7 @@ public class Client implements WebSocketObserver {
 
     private void joinGame(){
         gameID = chooseGame();
-        System.out.println("Choose color: 1.White 2.Black\n");
+        System.out.println("Choose color: 1.White 2.Black");
         ChessGame.TeamColor chosenColor;
         while(true) {
             int flag = getFlag();
@@ -170,6 +170,7 @@ public class Client implements WebSocketObserver {
 
     private void observeGame(){
         gameID = chooseGame();
+        color = ChessGame.TeamColor.WHITE;
         serverFacade.connect(authToken, gameID);
     }
 
@@ -374,16 +375,17 @@ public class Client implements WebSocketObserver {
 
     private void drawBoard(){
         artist.drawBoard(game, color);
+        printGamePlayMenu();
     }
 
     private void printGamePlayMenu(){
         if(isPlayer){
             System.out.println("1: Make Move  2: Redraw Board 3: Highlight Moves " +
-                    "4: Exit Game 5: resign  6:Help \n");
+                    "4: Exit Game 5: resign  6:Help ");
             handlePlayerInput();
         }
         else{
-            System.out.println("1: Redraw Board 2: Exit Game 3: Help\n");
+            System.out.println("1: Redraw Board 2: Exit Game 3: Help");
             handleObserverInput();
         }
     }
@@ -397,7 +399,7 @@ public class Client implements WebSocketObserver {
                 }
                 break;
             case 2:
-                artist.drawBoard(game, color);
+                drawBoard();
                 break;
             case 3:
                 if(!game.isGameOver()) {

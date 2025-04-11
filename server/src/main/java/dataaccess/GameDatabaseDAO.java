@@ -59,6 +59,21 @@ public class GameDatabaseDAO implements GameDAO{
         return 0;
     }
 
+    public void updateGame(GameData game) throws DataAccessException {
+        try(var conn = DatabaseManager.getConnection()){
+            try(var statement =
+                    conn.prepareStatement("UPDATE games SET game WHERE game_id = ?")){
+                String gameString = new Gson().toJson(game.game());
+                statement.setString(1, gameString);
+                statement.executeUpdate();
+            }
+
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
+
+    }
+
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()){
