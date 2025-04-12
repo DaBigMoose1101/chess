@@ -68,20 +68,7 @@ public class WebSocketService {
         try {
             getInfo(com);
             ChessGame chess = game.game();
-            ChessGame.TeamColor userColor;
-            if(game.whiteUsername().equals(user)){
-                userColor = ChessGame.TeamColor.WHITE;
-            }
-            else if(game.blackUsername().equals(user)){
-                userColor = ChessGame.TeamColor.BLACK;
-            }
-            else{
-                throw new InvalidMoveException();
-            }
-            ChessGame.TeamColor color = chess.getTeamTurn();
-            if(userColor != color){
-                throw new InvalidMoveException();
-            }
+            validatePlayer(chess);
             chess.makeMove(com.getMove());
             gameDataAccess.updateGame(game);
             return new LoadGameMessage(game, gameId);
@@ -96,10 +83,17 @@ public class WebSocketService {
     public ServerMessage resign(Session session, UserGameCommand com){
         try {
             getInfo(com);
-            game.game().resign();
+            ChessGame chess = game.game();
+            if(!game.blackUsername().equals(user) && !game.whiteUsername().equals(user) || chess.isGameOver()){
+                throw new InvalidMoveException();
+            }
+            chess.resign();
+            gameDataAccess.updateGame(game);
             return new NotificationMessage(user + " resigned.");
         } catch (DataAccessException e) {
             return new ErrorMessage(handleError(e).message());
+        } catch (InvalidMoveException e) {
+            return new ErrorMessage("Invalid Move");
         }
     }
 
@@ -109,6 +103,23 @@ public class WebSocketService {
 
     private ErrorResponse handleError(DataAccessException e){
         return new ErrorHandler(e).handleError();
+    }
+
+    private void validatePlayer(ChessGame chess) throws InvalidMoveException {
+        ChessGame.TeamColor userColor;
+        if(game.whiteUsername().equals(user)){
+            userColor = ChessGame.TeamColor.WHITE;
+        }
+        else if(game.blackUsername().equals(user)){
+            userColor = ChessGame.TeamColor.BLACK;
+        }
+        else{
+            throw new InvalidMoveException();
+        }
+        ChessGame.TeamColor color = chess.getTeamTurn();
+        if(userColor != color){
+            throw new InvalidMoveException();
+        }
     }
 
 }

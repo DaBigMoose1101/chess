@@ -104,7 +104,7 @@ public class UserService {
     }
 
     private void isAvailable(String username, String password, String email) throws DataAccessException{
-        if(!userDataAccess.isAvailable(username) || !userDataAccess.isAvailable(password)
+        if(!userDataAccess.isAvailable(username)
                 || !userDataAccess.isAvailable(email)){
             throw new DataAccessException("Error: Already Taken");
         }
