@@ -73,9 +73,10 @@ public class WebSocketHandler {
                     }
                     break;
                 case MAKE_MOVE:
-                    serverMessage = service.makeMove(session, (MakeMoveCommand) com);
+                    MakeMoveCommand comm = new Gson().fromJson(message, MakeMoveCommand.class);
+                    serverMessage = service.makeMove(session, comm);
                     user = service.getUser();
-                    ChessMove move = ((MakeMoveCommand)com).getMove();
+                    ChessMove move = comm.getMove();
                     if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
                         NotificationMessage note = new NotificationMessage(user + parseMove(move));
                         notifyConnections(serverMessage, session, gameId);
@@ -126,7 +127,7 @@ public class WebSocketHandler {
   private void notifyConnections(ServerMessage message,
                                   Session session, int gameId) throws IOException {
         ArrayList<Session> sessions = connections.getSessions(gameId);
-        if(sessions != null) {
+        if(sessions != null ) {
             for (Session ses : sessions) {
                 if (ses != session) {
                     sendMessage(ses, message);
