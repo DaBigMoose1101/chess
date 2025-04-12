@@ -307,6 +307,7 @@ public class Client implements WebSocketObserver {
                 help();
             }
             else if(flag == 4){
+
                 exit(0);
             }
             else{

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
 
 public class WebSocketFacade extends Endpoint {
@@ -30,6 +31,15 @@ public class WebSocketFacade extends Endpoint {
     }
     @OnOpen
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    public void disconnect(){
+        try{
+            session.close();
+        }
+        catch(IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
 

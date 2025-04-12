@@ -10,7 +10,8 @@ import websocket.commands.UserGameCommand;
 
 public class ServerFacade {
     private final String serverURL;
-    private final WebSocketFacade socket;
+    private WebSocketFacade socket;
+    private final WebSocketObserver observer;
 
     private ClientCommunicator getCommunicator(String path, String method){
         return new ClientCommunicator(serverURL + path, method);
@@ -18,11 +19,7 @@ public class ServerFacade {
 
     public ServerFacade(String serverURL, WebSocketObserver observer){
         this.serverURL = serverURL;
-        try {
-            this.socket = new WebSocketFacade(serverURL, observer);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.observer = observer;
     }
 
     private void send(UserGameCommand com){
@@ -33,6 +30,13 @@ public class ServerFacade {
         }
     }
 
+    private void wsConnect(WebSocketObserver observer){
+        try {
+            this.socket = new WebSocketFacade(serverURL, observer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     public void connect(String authToken, Integer gameID) {
@@ -40,6 +44,10 @@ public class ServerFacade {
         send(com);
     }
 
+    public void disconnect(){
+        socket.disconnect();
+
+    }
     public void makeMove(String authToken, Integer gameID, ChessMove move){
         MakeMoveCommand com = new MakeMoveCommand(authToken, gameID, move);
         send(com);
@@ -70,6 +78,7 @@ public class ServerFacade {
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
         } else {
+            wsConnect(observer);
             return new Gson().fromJson(responseString, RegisterResponse.class);
         }
     }
@@ -89,6 +98,7 @@ public class ServerFacade {
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
         } else {
+            wsConnect(observer);
             return new Gson().fromJson(responseString, LoginResponse.class);
         }
     }
@@ -105,6 +115,7 @@ public class ServerFacade {
         if (responseString.contains("message")) {
             return new Gson().fromJson(responseString, ErrorResponse.class);
         } else {
+            disconnect();
             return new Gson().fromJson(responseString, LogoutResponse.class);
         }
     }

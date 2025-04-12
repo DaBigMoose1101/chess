@@ -45,7 +45,8 @@ public class ServerFacadeTests {
     @Test
     public void registerUsernameTaken(){
         postRegisterSetUp();
-        Assertions.assertInstanceOf(ErrorResponse.class, facade.register("Bob","bill","bill"));
+        Assertions.assertInstanceOf(ErrorResponse.class,
+                facade.register("Bob","bill","bill"));
     }
     @Test
     public void login(){
