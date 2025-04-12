@@ -31,7 +31,7 @@ public class Artist {
 
     private void checkHighlight(ChessPosition pos){
         for(ChessMove move : moves){
-            if(pos == move.getEndPosition()){
+            if(pos.getRow() == move.getEndPosition().getRow() && pos.getColumn() == move.getEndPosition().getColumn()){
                 setSquareBlue();
             }
         }
