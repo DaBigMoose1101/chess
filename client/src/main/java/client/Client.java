@@ -140,18 +140,15 @@ public class Client implements WebSocketObserver {
         gameID = chooseGame();
         System.out.println("Choose color: 1.White 2.Black");
         ChessGame.TeamColor chosenColor;
-        while(true) {
-            int flag = getFlag();
-            if (flag == 1 ) {
-                chosenColor = ChessGame.TeamColor.WHITE;
-                break;
-            } else if (flag == 2) {
-                chosenColor = ChessGame.TeamColor.BLACK;
-                break;
-            }
-            else {
-              handleInvalid();
-            }
+        int flag = getFlag();
+        if (flag == 1 ) {
+            chosenColor = ChessGame.TeamColor.WHITE;
+        } else if (flag == 2) {
+            chosenColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            handleInvalid();
+            return;
         }
 
         Object response = serverFacade.joinGame(authToken, chosenColor, gameID);
