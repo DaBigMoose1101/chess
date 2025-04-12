@@ -1,11 +1,8 @@
 package client;
 
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import records.*;
-import chess.ChessGame;
 import model.GameData;
 import ui.Artist;
 import websocket.messages.ErrorMessage;
@@ -162,6 +159,7 @@ public class Client implements WebSocketObserver {
             color = chosenColor;
             isPlayer = true;
             serverFacade.connect(authToken, gameID);
+            inGame = true;
         }
         else{
             System.out.println(((ErrorResponse)response).message());
@@ -172,6 +170,8 @@ public class Client implements WebSocketObserver {
         gameID = chooseGame();
         color = ChessGame.TeamColor.WHITE;
         serverFacade.connect(authToken, gameID);
+        isPlayer = false;
+        inGame = true;
     }
 
     private int toInt(char c){
@@ -260,23 +260,21 @@ public class Client implements WebSocketObserver {
                     new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))), toInt(input.charAt(1)));
             Collection<ChessMove> highlighted = game.validMoves(pos);
             artist.setMoves(highlighted);
-            drawBoard();
+            drawBoard("");
             artist.setMoves(new ArrayList<>());
         }
         else{
             System.out.println("Invalid position\n");
+            drawBoard("");
         }
-        printGamePlayMenu();
     }
 
     private void leaveGame(){
         serverFacade.leave(authToken, gameID);
-        inGame = false;
     }
 
     private void resign(){
         serverFacade.resign(authToken, gameID);
-        printGamePlayMenu();
     }
 
     private void help(){
@@ -333,11 +331,9 @@ public class Client implements WebSocketObserver {
                 getGameList();
             } else if (flag == 3) {
                 joinGame();
-                inGame = true;
                 inGameLoop();
             } else if (flag == 4) {
                 observeGame();
-                inGame = true;
                 inGameLoop();
             } else if (flag == 5) {
                 logout();
@@ -345,14 +341,53 @@ public class Client implements WebSocketObserver {
                 help();
             } else {
                 handleInvalid();
-                postLoginLoop();
             }
         }
     }
 
     private void inGameLoop(){
-        while(inGame){
-
+        while (inGame) {
+            int flag = getFlag();
+            switch (flag) {
+                case 1:
+                    if (!game.isGameOver() && isPlayer) {
+                        makeMove();
+                    } else {
+                        drawBoard("");
+                    }
+                    break;
+                case 2:
+                    if (!isPlayer) {
+                        leaveGame();
+                        return;
+                    }
+                    drawBoard("");
+                    break;
+                case 3:
+                    if (!isPlayer) {
+                        help();
+                    } else {
+                        if (!game.isGameOver()) {
+                            highlight();
+                        }
+                    }
+                    break;
+                case 4:
+                    if (isPlayer) {
+                        leaveGame();
+                        return;
+                    }
+                case 5:
+                    if (!game.isGameOver() && isPlayer) {
+                        resign();
+                    }
+                    break;
+                case 6:
+                    if (isPlayer) {
+                        help();
+                    }
+                    break;
+            }
         }
     }
 
@@ -373,8 +408,9 @@ public class Client implements WebSocketObserver {
         }
     }
 
-    private void drawBoard(){
+    private void drawBoard(String note){
         artist.drawBoard(game, color);
+        System.out.println(note);
         printGamePlayMenu();
     }
 
@@ -382,59 +418,10 @@ public class Client implements WebSocketObserver {
         if(isPlayer){
             System.out.println("1: Make Move  2: Redraw Board 3: Highlight Moves " +
                     "4: Exit Game 5: resign  6:Help ");
-            handlePlayerInput();
         }
         else{
             System.out.println("1: Redraw Board 2: Exit Game 3: Help");
-            handleObserverInput();
         }
-    }
-
-    private void handlePlayerInput(){
-        int flag = getFlag();
-        switch (flag){
-            case 1:
-                if(!game.isGameOver()) {
-                    makeMove();
-                }
-                break;
-            case 2:
-                drawBoard();
-                break;
-            case 3:
-                if(!game.isGameOver()) {
-                    highlight();
-                }
-                break;
-            case 4:
-                leaveGame();
-                break;
-            case 5:
-                if(!game.isGameOver()) {
-                    resign();
-                }
-                break;
-            case 6:
-                help();
-                break;
-        }
-
-    }
-
-    private void handleObserverInput(){
-        int flag = getFlag();
-        switch (flag){
-            case 1:
-                drawBoard();
-                break;
-            case 2:
-                leaveGame();
-                break;
-            case 3:
-                help();
-                break;
-        }
-
     }
 
     public Client(){
@@ -458,27 +445,26 @@ public class Client implements WebSocketObserver {
         System.out.println("Goodbye!");
     }
 
-    public void notify(String serverMessage){
-        ServerMessage message = new Gson().fromJson(serverMessage, ServerMessage.class);
-        switch(message.getServerMessageType()){
-            case LOAD_GAME:
-                LoadGameMessage g = new Gson().fromJson(serverMessage, LoadGameMessage.class);
-                game = g.getGame().game();
-                drawBoard();
-                printGamePlayMenu();
-                break;
-            case NOTIFICATION:
-                NotificationMessage n = new Gson().fromJson(serverMessage, NotificationMessage.class);
-                System.out.println(((NotificationMessage) message).getMessage());
-                printGamePlayMenu();
-                break;
-            case ERROR:
-                ErrorMessage e = new Gson().fromJson(serverMessage, ErrorMessage.class);
-                System.out.println(((ErrorMessage)message).getErrorMessage());
-                printGamePlayMenu();
-                break;
-        }
+    public void notify(String serverMessage) {
+        synchronized (this) {
+            ServerMessage message = new Gson().fromJson(serverMessage, ServerMessage.class);
+            switch (message.getServerMessageType()) {
+                case LOAD_GAME:
+                    LoadGameMessage g = new Gson().fromJson(serverMessage, LoadGameMessage.class);
+                    game = g.getGame().game();
+                    drawBoard("");
+                    break;
+                case NOTIFICATION:
+                    NotificationMessage n = new Gson().fromJson(serverMessage, NotificationMessage.class);
+                    drawBoard(n.getMessage());
+                    break;
+                case ERROR:
+                    ErrorMessage e = new Gson().fromJson(serverMessage, ErrorMessage.class);
+                    drawBoard(e.getErrorMessage());
+                    break;
+            }
 
+        }
     }
 
 }

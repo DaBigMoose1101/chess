@@ -50,10 +50,10 @@ public class WebSocketService {
     public ServerMessage leave(Session session, UserGameCommand com){
         try {
             getInfo(com);
-            if(game.blackUsername().equals(user)){
+            if(game.blackUsername() != null && game.blackUsername().equals(user)){
                 gameDataAccess.updateGameColor(game,"", ChessGame.TeamColor.BLACK);
             }
-            else if(game.whiteUsername().equals(user)){
+            else if(game.whiteUsername() != null && game.whiteUsername().equals(user)){
                 gameDataAccess.updateGameColor(game,"", ChessGame.TeamColor.WHITE);
             }
             return new NotificationMessage(user + " left the game.");

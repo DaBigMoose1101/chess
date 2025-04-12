@@ -48,10 +48,10 @@ public class WebSocketHandler {
                         game = ((LoadGameMessage) serverMessage).getGame();
                         connections.addConnection(gameId, session);
                         String position = "observer";
-                        if(game.whiteUsername().equals(user)){
+                        if(game.whiteUsername()!= null && game.whiteUsername().equals(user)){
                             position = "white";
                         }
-                        else if(game.blackUsername().equals(user)){
+                        else if(game.blackUsername()!= null &&game.blackUsername().equals(user)){
                             position = "black";
                         }
                         NotificationMessage note = new NotificationMessage(user + " joined the game as " + position);
@@ -126,9 +126,11 @@ public class WebSocketHandler {
   private void notifyConnections(ServerMessage message,
                                   Session session, int gameId) throws IOException {
         ArrayList<Session> sessions = connections.getSessions(gameId);
-        for (Session ses : sessions){
-            if(ses != session){
-                sendMessage(ses, message);
+        if(sessions != null) {
+            for (Session ses : sessions) {
+                if (ses != session) {
+                    sendMessage(ses, message);
+                }
             }
         }
     }
