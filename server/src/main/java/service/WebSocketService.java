@@ -6,6 +6,7 @@ import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import records.ErrorResponse;
@@ -32,7 +33,8 @@ public class WebSocketService {
     private void getInfo(UserGameCommand com) throws DataAccessException {
         gameId = com.getGameID();
         authToken= com.getAuthToken();
-        user = authDataAccess.getAuthToken(authToken).username();
+        AuthData auth = authDataAccess.getAuthToken(authToken);
+        user = auth.username();
        game = gameDataAccess.getGame(gameId);
     }
 
@@ -66,6 +68,20 @@ public class WebSocketService {
         try {
             getInfo(com);
             ChessGame chess = game.game();
+            ChessGame.TeamColor userColor;
+            if(game.whiteUsername().equals(user)){
+                userColor = ChessGame.TeamColor.WHITE;
+            }
+            else if(game.blackUsername().equals(user)){
+                userColor = ChessGame.TeamColor.BLACK;
+            }
+            else{
+                throw new InvalidMoveException();
+            }
+            ChessGame.TeamColor color = chess.getTeamTurn();
+            if(userColor != color){
+                throw new InvalidMoveException();
+            }
             chess.makeMove(com.getMove());
             gameDataAccess.updateGame(game);
             return new LoadGameMessage(game, gameId);

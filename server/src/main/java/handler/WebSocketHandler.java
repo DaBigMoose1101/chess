@@ -82,7 +82,6 @@ public class WebSocketHandler {
                         notifyConnections(serverMessage, session, gameId);
                         notifyConnections(note, session, gameId);
                         sendMessage(session, serverMessage);
-                        sendMessage(session, new NotificationMessage("You" + parseMove(move)));
                     }
                     else{
                         sendMessage(session, serverMessage);
@@ -103,8 +102,14 @@ public class WebSocketHandler {
                     sendMessage(session, serverMessage);
             }
         }
-        catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+         catch (Exception e) {
+            ErrorMessage err = new ErrorMessage(e.getMessage());
+            try{
+                sendMessage(session, err);
+            }
+            catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
         }
     }
 
