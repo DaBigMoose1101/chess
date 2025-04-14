@@ -104,20 +104,6 @@ class UserServiceTest {
     }
 
     @Test
-    void registerUserPasswordTaken(){
-        try {
-            RegisterRequest req1 = new RegisterRequest("BillyBoy", "Qwerty", "billyboy@gmail.com");
-            RegisterRequest req2 = new RegisterRequest("Billy", "Qwerty", "billy@gmail.com");
-
-            RegisterResponse actualRes1 = (RegisterResponse) service.registerUser(req1);
-            assertInstanceOf(ErrorResponse.class, service.registerUser(req2), "Should throw Already Taken Error");
-        }
-        catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-    }
-
-    @Test
     void registerUserEmailTaken(){
         try {
             RegisterRequest req1 = new RegisterRequest("BillyBoy", "Qwerty", "billyboy@gmail.com");

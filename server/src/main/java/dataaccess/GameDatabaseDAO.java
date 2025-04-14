@@ -143,35 +143,26 @@ public class GameDatabaseDAO implements GameDAO{
     public void updateGameColor(GameData game, String username, ChessGame.TeamColor color) throws DataAccessException{
 
         try(var conn = DatabaseManager.getConnection()){
+            String updateStatement;
             switch(color){
                 case BLACK:
-                    String updateStatementB = "UPDATE games SET black_user = ? WHERE game_id = ?";
-                    try(var statement = conn.prepareStatement(updateStatementB)){
-                        if(username.matches("[a-zA-Z1-9]+")){
-                            statement.setString(1, username);
-                        }
-                        if(username.isEmpty()){
-                            statement.setString( 1, null);
-                        }
-                        statement.setInt(2, game.gameID());
-                        statement.executeUpdate();
-                    }
+                    updateStatement = "UPDATE games SET black_user = ? WHERE game_id = ?";
                     break;
                 case WHITE:
-                    String updateStatementW = "UPDATE games SET white_user = ? WHERE game_id = ?";
-                    try(var statement = conn.prepareStatement(updateStatementW)){
-                        if(username.matches("[a-zA-Z1-9]+")){
-                            statement.setString(1, username);
-                        }
-                        if(username.isEmpty()){
-                            statement.setString( 1, null);
-                        }
-                        statement.setInt(2, game.gameID());
-                        statement.executeUpdate();
-                    }
+                    updateStatement = "UPDATE games SET white_user = ? WHERE game_id = ?";
                     break;
                 default:
                     throw new DataAccessException("Error: Invalid Color");
+            }
+            try(var statement = conn.prepareStatement(updateStatement)){
+                if(username.matches("[a-zA-Z1-9]+")){
+                    statement.setString(1, username);
+                }
+                if(username.isEmpty()){
+                    statement.setString( 1, null);
+                }
+                statement.setInt(2, game.gameID());
+                statement.executeUpdate();
             }
         } catch (DataAccessException | SQLException e) {
             throw new DataAccessException(e.getMessage());
