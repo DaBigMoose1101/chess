@@ -26,6 +26,7 @@ public class WebSocketHandler {
     static GameDAO gameDataAccess;
     static ConnectionManager connections = new ConnectionManager();
     private Gson serializer = new Gson();
+    private int gameId;
 
     public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
@@ -35,7 +36,7 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message){
         WebSocketService service = new WebSocketService(authDataAccess, gameDataAccess);
         UserGameCommand com = serializer.fromJson(message, UserGameCommand.class);
-        int gameId = com.getGameID();
+        gameId = com.getGameID();
         ServerMessage serverMessage;
         String user;
         GameData game;
@@ -122,6 +123,7 @@ public class WebSocketHandler {
     @OnWebSocketClose
     public void onClose(Session session, int statusCode, String reason) {
         System.out.println("Connection closed: " + reason);
+        connections.removeSession(gameId, session);
     }
 
     private void sendMessage(Session session, ServerMessage message) throws IOException {
