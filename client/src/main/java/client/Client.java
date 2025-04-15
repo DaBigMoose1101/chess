@@ -401,6 +401,7 @@ public class Client implements WebSocketObserver {
                     break;
                 default:
                     handleInvalid();
+                    printGamePlayMenu();
                     break;
             }
         }
