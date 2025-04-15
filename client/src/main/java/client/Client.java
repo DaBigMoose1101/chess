@@ -271,7 +271,16 @@ public class Client implements WebSocketObserver {
     }
 
     private void resign(){
-        serverFacade.resign(authToken, gameID);
+        System.out.println("Are you sure you want to resign?");
+        System.out.println("1: yes 2: no");
+        int flag = getFlag();
+        if(flag == 1) {
+            serverFacade.resign(authToken, gameID);
+        }
+        else if( flag != 2){
+            handleInvalid();
+            resign();
+        }
     }
 
     private void help(){
@@ -362,19 +371,20 @@ public class Client implements WebSocketObserver {
                     drawBoard("");
                     break;
                 case 3:
-                    if (!isPlayer) {
-                        help();
-                    } else {
-                        if (!game.isGameOver()) {
-                            highlight();
-                        }
+                    if (!game.isGameOver()) {
+                        highlight();
                     }
+
                     break;
                 case 4:
                     if (isPlayer) {
                         leaveGame();
                         return;
                     }
+                    else{
+                        help();
+                    }
+                    break;
                 case 5:
                     if (!game.isGameOver() && isPlayer) {
                         resign();
@@ -418,7 +428,7 @@ public class Client implements WebSocketObserver {
                     "4: Exit Game 5: resign  6:Help ");
         }
         else{
-            System.out.println("1: Redraw Board 2: Exit Game 3: Help");
+            System.out.println("1: Redraw Board 2: Exit Game 3: highlight move 4: help");
         }
     }
 
@@ -454,11 +464,11 @@ public class Client implements WebSocketObserver {
                     break;
                 case NOTIFICATION:
                     NotificationMessage n = new Gson().fromJson(serverMessage, NotificationMessage.class);
-                    drawBoard(n.getMessage());
+                    System.out.println(n.getMessage());
                     break;
                 case ERROR:
                     ErrorMessage e = new Gson().fromJson(serverMessage, ErrorMessage.class);
-                    drawBoard(e.getErrorMessage());
+                    System.out.println(e.getErrorMessage());
                     break;
             }
 

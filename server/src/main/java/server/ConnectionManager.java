@@ -28,7 +28,7 @@ public class ConnectionManager {
 
     public void removeSession(int gameId, Session session){
         ArrayList<Session> sessions = getSessions(gameId);
-        if(session != null) {
+        if(session != null && !sessions.isEmpty()) {
             sessions.remove(session);
             if(sessions.isEmpty()) {
                 connections.remove(gameId, sessions);

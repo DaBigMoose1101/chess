@@ -1,5 +1,6 @@
 package handler;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -79,7 +80,8 @@ public class WebSocketHandler {
                     user = service.getUser();
                     ChessMove move = comm.getMove();
                     if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-                        NotificationMessage note = new NotificationMessage(user + parseMove(move));
+                        GameData g = service.getGame();
+                        NotificationMessage note = getNotification(user, move, g);
                         notifyConnections(serverMessage, session, gameId);
                         notifyConnections(note, session, gameId);
                         sendMessage(session, serverMessage);
@@ -163,6 +165,30 @@ public class WebSocketHandler {
             case 8 -> "h";
             default -> "err";
         };
+    }
+
+    private NotificationMessage getNotification(String user, ChessMove move, GameData game){
+        NotificationMessage note;
+        if(game.game().isInCheck(ChessGame.TeamColor.WHITE)){
+            note = new NotificationMessage(game.whiteUsername() + " is in check:("+user+parseMove(move)+")");
+        }
+        else if(game.game().isInCheck(ChessGame.TeamColor.BLACK)){
+            note = new NotificationMessage(game.blackUsername() + " is in check:("+user+parseMove(move)+")");
+        }
+        else if(game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+            note = new NotificationMessage(game.whiteUsername() + " is in checkmate:("+user+parseMove(move)+")");
+        }
+        else if(game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+            note = new NotificationMessage(game.blackUsername() + " is in checkmate:("+user+parseMove(move)+")");
+        }
+        else if(game.game().isInStalemate(ChessGame.TeamColor.WHITE)
+                || game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
+            note = new NotificationMessage("The game is in Stalemate");
+        }
+        else{
+            note = new NotificationMessage(user+parseMove(move));
+        }
+        return note;
     }
 
 }

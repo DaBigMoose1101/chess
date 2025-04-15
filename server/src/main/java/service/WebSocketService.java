@@ -101,6 +101,10 @@ public class WebSocketService {
         return user;
     }
 
+    public GameData getGame(){
+        return game;
+    }
+
     private ErrorResponse handleError(DataAccessException e){
         return new ErrorHandler(e).handleError();
     }
