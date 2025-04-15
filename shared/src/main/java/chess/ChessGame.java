@@ -91,7 +91,8 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
         if(board.getPiece(move.getStartPosition()) != null && valid.contains(move)
-                && turn == board.getPiece(move.getStartPosition()).getTeamColor() && !gameOver) {
+                && turn == board.getPiece(move.getStartPosition()).getTeamColor() && !gameOver
+                && !isInCheck(turn)) {
                 board.makeMove(move);
                 changeTurn();
         }

@@ -217,13 +217,13 @@ public class WebSocketHandler {
 
     private NotificationMessage getNotification(String user, ChessMove move, GameData game){
         NotificationMessage checkmate = isInCheckmate(user, move, game);
-        NotificationMessage check = isInCheck(user, move, game);
+        NotificationMessage isCheck = isInCheck(user, move, game);
         NotificationMessage stalemate = isInStalemate(user, move, game);
         if(checkmate != null){
             return checkmate;
         }
-        if(check != null){
-            return check;
+        if(isCheck != null){
+            return isCheck;
         }
         if(stalemate != null){
             return stalemate;
