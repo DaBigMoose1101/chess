@@ -96,8 +96,7 @@ public class ChessGame {
                 changeTurn();
         }
         else{
-            InvalidMoveException e = new InvalidMoveException();
-            throw e;
+            throw new InvalidMoveException();
         }
     }
 
@@ -185,6 +184,7 @@ public class ChessGame {
                     }
                 }
             }
+            gameOver = true;
             return true;
         }
         return false;

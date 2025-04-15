@@ -219,31 +219,35 @@ public class Client implements WebSocketObserver {
     }
 
     private void makeMove(){
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter a move by typing the starting position " +
-                "and ending position without spaces. (i.e. 2a3a\n");
-        System.out.println("Enter move: ");
-        String input = s.nextLine();
-        ChessPosition start;
-        ChessPosition end;
-        ChessPiece.PieceType promotion = null;
-        if(isValidInput(input)){
-            start = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))),
-                    toInt(input.charAt(1)));
-            end = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(2))),
-                    toInt(input.charAt(3)));
-            if(canPromote(start, end)){
-                promotion = getPromotion();
-            }
-            Collection<ChessMove> valid = game.validMoves(start);
-            ChessMove move = new ChessMove(start, end, promotion);
-            if(valid.contains(move)){
-                serverFacade.makeMove(authToken, gameID, move);
+        if(!game.isGameOver()) {
+            Scanner s = new Scanner(System.in);
+            System.out.println("Enter a move by typing the starting position " +
+                    "and ending position without spaces. (i.e. 2a3a\n");
+            System.out.println("Enter move: ");
+            String input = s.nextLine();
+            ChessPosition start;
+            ChessPosition end;
+            ChessPiece.PieceType promotion = null;
+            if (isValidInput(input)) {
+                start = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(0))),
+                        toInt(input.charAt(1)));
+                end = new ChessPosition(Integer.parseInt(String.valueOf(input.charAt(2))),
+                        toInt(input.charAt(3)));
+                if (canPromote(start, end)) {
+                    promotion = getPromotion();
+                }
+                Collection<ChessMove> valid = game.validMoves(start);
+                ChessMove move = new ChessMove(start, end, promotion);
+                if (valid.contains(move)) {
+                    serverFacade.makeMove(authToken, gameID, move);
+                }
+            } else {
+                System.out.println("Invalid move\n");
+                printGamePlayMenu();
             }
         }
         else{
-            System.out.println("Invalid move\n");
-            printGamePlayMenu();
+            System.out.println("game is over");
         }
 
     }
@@ -394,6 +398,9 @@ public class Client implements WebSocketObserver {
                     if (isPlayer) {
                         help();
                     }
+                    break;
+                default:
+                    handleInvalid();
                     break;
             }
         }

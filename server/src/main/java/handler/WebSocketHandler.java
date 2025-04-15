@@ -28,6 +28,7 @@ public class WebSocketHandler {
     static ConnectionManager connections = new ConnectionManager();
     private Gson serializer = new Gson();
     private int gameId;
+    private boolean check;
 
     public static void initialize(AuthDAO auth, GameDAO game){
         authDataAccess = auth;
@@ -85,6 +86,11 @@ public class WebSocketHandler {
                         notifyConnections(serverMessage, session, gameId);
                         notifyConnections(note, session, gameId);
                         sendMessage(session, serverMessage);
+                        if(check){
+                            sendMessage(session, note);
+                        }
+                        check = false;
+
                     }
                     else{
                         sendMessage(session, serverMessage);
@@ -167,28 +173,62 @@ public class WebSocketHandler {
         };
     }
 
-    private NotificationMessage getNotification(String user, ChessMove move, GameData game){
-        NotificationMessage note;
+    private NotificationMessage isInCheck(String user, ChessMove move, GameData game) {
+        NotificationMessage note = null;
+        check = false;
         if(game.game().isInCheck(ChessGame.TeamColor.WHITE)){
             note = new NotificationMessage(game.whiteUsername() + " is in check:("+user+parseMove(move)+")");
+            check = true;
         }
         else if(game.game().isInCheck(ChessGame.TeamColor.BLACK)){
             note = new NotificationMessage(game.blackUsername() + " is in check:("+user+parseMove(move)+")");
+            check = true;
         }
-        else if(game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+        return note;
+    }
+
+    private NotificationMessage isInCheckmate(String user, ChessMove move, GameData game){
+        NotificationMessage note = null;
+        check = false;
+        if(game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
             note = new NotificationMessage(game.whiteUsername() + " is in checkmate:("+user+parseMove(move)+")");
+            check = true;
         }
         else if(game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
             note = new NotificationMessage(game.blackUsername() + " is in checkmate:("+user+parseMove(move)+")");
-        }
-        else if(game.game().isInStalemate(ChessGame.TeamColor.WHITE)
-                || game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
-            note = new NotificationMessage("The game is in Stalemate");
-        }
-        else{
-            note = new NotificationMessage(user+parseMove(move));
+            check = true;
         }
         return note;
+    }
+
+    private NotificationMessage isInStalemate(String user, ChessMove move, GameData game){
+        NotificationMessage note = null;
+        check = false;
+        if(game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
+            note = new NotificationMessage(game.whiteUsername() + " is in stalemate:("+user+parseMove(move)+")");
+            check = true;
+        }
+        else if(game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
+            note = new NotificationMessage(game.blackUsername() + " is in stalemate:("+user+parseMove(move)+")");
+            check = true;
+        }
+        return note;
+    }
+
+    private NotificationMessage getNotification(String user, ChessMove move, GameData game){
+        NotificationMessage checkmate = isInCheckmate(user, move, game);
+        NotificationMessage check = isInCheck(user, move, game);
+        NotificationMessage stalemate = isInStalemate(user, move, game);
+        if(checkmate != null){
+            return checkmate;
+        }
+        if(check != null){
+            return check;
+        }
+        if(stalemate != null){
+            return stalemate;
+        }
+        return new NotificationMessage(user+parseMove(move));
     }
 
 }
